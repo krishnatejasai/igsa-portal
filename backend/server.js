@@ -15,6 +15,9 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("IGSA Portal API is running");
 });
+const eventRoutes = require("./routes/eventRoutes");
+
+app.use("/api/events", eventRoutes);
 
 const PORT = process.env.PORT || 5000;
 

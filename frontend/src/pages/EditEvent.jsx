@@ -17,14 +17,25 @@ function EditEvent() {
     registrationLink: "",
   });
 
-  useEffect(() => {
-    const savedEvents = JSON.parse(localStorage.getItem("igsaEvents")) || [];
-    const selectedEvent = savedEvents.find((item) => String(item.id) === id);
+useEffect(() => {
+  const fetchEvent = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/events/${id}`);
 
-    if (selectedEvent) {
-      setEvent(selectedEvent);
+      if (!response.ok) {
+        throw new Error("Failed to fetch event");
+      }
+
+      const data = await response.json();
+      setEvent(data);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to load event details.");
     }
-  }, [id]);
+  };
+
+  fetchEvent();
+}, [id]);
 
   const handleChange = (e) => {
     setEvent({
@@ -33,16 +44,30 @@ function EditEvent() {
     });
   };
 
-  const handleUpdate = () => {
-    const savedEvents = JSON.parse(localStorage.getItem("igsaEvents")) || [];
+const handleUpdate = async () => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/events/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...event,
+        capacity: Number(event.capacity),
+      }),
+    });
 
-    const updatedEvents = savedEvents.map((item) =>
-      String(item.id) === id ? event : item
-    );
+    if (!response.ok) {
+      throw new Error("Failed to update event");
+    }
 
-    localStorage.setItem("igsaEvents", JSON.stringify(updatedEvents));
+    alert("Event updated successfully!");
     navigate("/admin/events");
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong while updating the event.");
+  }
+};
 
   return (
     <AdminLayout>

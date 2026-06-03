@@ -23,22 +23,30 @@ function CreateEvent() {
     });
   };
 
-  const handleSave = () => {
-    const existingEvents = JSON.parse(localStorage.getItem("igsaEvents")) || [];
+  const handleSave = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/api/events", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...event,
+        capacity: Number(event.capacity),
+      }),
+    });
 
-    const newEvent = {
-      id: Date.now(),
-      ...event,
-      registrations: 0,
-    };
+    if (!response.ok) {
+      throw new Error("Failed to create event");
+    }
 
-    localStorage.setItem(
-      "igsaEvents",
-      JSON.stringify([...existingEvents, newEvent])
-    );
-
+    alert("Event created successfully!");
     navigate("/admin/events");
-  };
+  } catch (error) {
+    alert("Something went wrong while creating the event.");
+    console.error(error);
+  }
+};
 
   return (
     <AdminLayout>
