@@ -28,17 +28,22 @@ function CreateEvent() {
     const response = await fetch("http://localhost:5000/api/events", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-      },
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+},
       body: JSON.stringify({
         ...event,
         capacity: Number(event.capacity),
       }),
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to create event");
-    }
+    const data = await response.json();
+
+if (!response.ok) {
+  console.log(data);
+  alert(data.message || "Failed to create event");
+  return;
+}
 
     alert("Event created successfully!");
     navigate("/admin/events");

@@ -49,8 +49,9 @@ const handleUpdate = async () => {
     const response = await fetch(`http://localhost:5000/api/events/${id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
-      },
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+},
       body: JSON.stringify({
         ...event,
         capacity: Number(event.capacity),

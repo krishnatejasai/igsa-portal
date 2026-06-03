@@ -45,12 +45,13 @@ function CreateBoardMember() {
 
     try {
       const response = await fetch("http://localhost:5000/api/board-members", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(member),
-      });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+  },
+  body: JSON.stringify(member),
+});
 
       if (!response.ok) {
         throw new Error("Failed to create board member");

@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -9,7 +10,8 @@ const {
 } = require("../controllers/galleryController");
 
 router.get("/", getPhotos);
-router.post("/", createPhoto);
-router.delete("/:id", deletePhoto);
+
+router.post("/", protect, createPhoto);
+router.delete("/:id", protect, deletePhoto);
 
 module.exports = router;

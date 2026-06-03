@@ -1,27 +1,40 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function AdminLogin() {
-      useEffect(() => {
-    if (localStorage.getItem("igsaAdminLoggedIn") === "true") {
-      window.location.href = "/admin/dashboard";
-    }
-  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    const adminEmail = "admin@igsauf.com";
-    const adminPassword = "igsa2026";
+  const handleLogin = async () => {
+    setError("");
 
-    if (
-      email.trim() === adminEmail &&
-      password.trim() === adminPassword
-    ) {
-      localStorage.setItem("igsaAdminLoggedIn", "true");
-      window.location.href = "/admin/dashboard";
-    } else {
-      setError("Invalid email or password");
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Invalid email or password");
+        return;
+      }
+
+      localStorage.setItem("igsaAdminToken", data.token);
+      localStorage.setItem("igsaAdminUser", JSON.stringify(data.admin));
+
+      window.location.replace("/admin/dashboard");
+    } catch (error) {
+      console.error(error);
+      setError("Unable to login. Please try again.");
     }
   };
 

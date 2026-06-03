@@ -25,13 +25,17 @@ function CreateAnnouncement() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/announcements", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(announcement),
-      });
+      const response = await fetch(
+  "http://localhost:5000/api/announcements",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+    },
+    body: JSON.stringify(announcement),
+  }
+);
 
       if (!response.ok) {
         throw new Error("Failed to create announcement");

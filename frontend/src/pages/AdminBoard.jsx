@@ -37,11 +37,14 @@ function AdminBoard() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/board-members/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+  `http://localhost:5000/api/board-members/${id}`,
+  {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+    },
+  }
+);
 
       if (!response.ok) {
         throw new Error("Failed to remove board member");

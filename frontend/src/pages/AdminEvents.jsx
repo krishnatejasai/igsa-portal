@@ -37,8 +37,11 @@ function AdminEvents() {
 
     try {
       const response = await fetch(`http://localhost:5000/api/events/${id}`, {
-        method: "DELETE",
-      });
+  method: "DELETE",
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+  },
+});
 
       if (!response.ok) {
         throw new Error("Failed to delete event");

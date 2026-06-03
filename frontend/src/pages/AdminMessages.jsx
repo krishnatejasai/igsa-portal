@@ -7,7 +7,11 @@ function AdminMessages() {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/messages");
+      const response = await fetch("http://localhost:5000/api/messages", {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+  },
+});
 
       if (!response.ok) {
         throw new Error("Failed to fetch messages");
@@ -36,8 +40,11 @@ function AdminMessages() {
 
     try {
       const response = await fetch(`http://localhost:5000/api/messages/${id}`, {
-        method: "DELETE",
-      });
+  method: "DELETE",
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+  },
+});
 
       if (!response.ok) {
         throw new Error("Failed to delete message");

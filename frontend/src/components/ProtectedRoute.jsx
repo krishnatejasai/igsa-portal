@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
-  const isLoggedIn = localStorage.getItem("igsaAdminLoggedIn") === "true";
+  const token = localStorage.getItem("igsaAdminToken");
 
-  if (!isLoggedIn) {
+  if (!token) {
     return <Navigate to="/admin/login" replace />;
   }
 

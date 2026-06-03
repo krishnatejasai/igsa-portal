@@ -17,15 +17,36 @@ function Dashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [eventsRes, registrationsRes, boardRes, announcementsRes, galleryRes, messagesRes] =
-  await Promise.all([
-    fetch("http://localhost:5000/api/events"),
-    fetch("http://localhost:5000/api/registrations"),
-    fetch("http://localhost:5000/api/board-members"),
-    fetch("http://localhost:5000/api/announcements"),
-    fetch("http://localhost:5000/api/gallery"),
-    fetch("http://localhost:5000/api/messages"),
-  ]);
+        const token = localStorage.getItem("igsaAdminToken");
+
+const [
+  eventsRes,
+  registrationsRes,
+  boardRes,
+  announcementsRes,
+  galleryRes,
+  messagesRes,
+] = await Promise.all([
+  fetch("http://localhost:5000/api/events"),
+
+  fetch("http://localhost:5000/api/registrations", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }),
+
+  fetch("http://localhost:5000/api/board-members"),
+
+  fetch("http://localhost:5000/api/announcements"),
+
+  fetch("http://localhost:5000/api/gallery"),
+
+  fetch("http://localhost:5000/api/messages", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }),
+]);
 
 const events = await eventsRes.json();
 const registrations = await registrationsRes.json();

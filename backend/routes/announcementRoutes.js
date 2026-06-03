@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -11,9 +12,10 @@ const {
 } = require("../controllers/announcementController");
 
 router.get("/", getAnnouncements);
-router.post("/", createAnnouncement);
 router.get("/:id", getAnnouncementById);
-router.put("/:id", updateAnnouncement);
-router.delete("/:id", deleteAnnouncement);
+
+router.post("/", protect, createAnnouncement);
+router.put("/:id", protect, updateAnnouncement);
+router.delete("/:id", protect, deleteAnnouncement);
 
 module.exports = router;

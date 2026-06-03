@@ -21,6 +21,7 @@ const registrationRoutes = require("./routes/registrationRoutes");
 const boardMemberRoutes = require("./routes/boardMemberRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 app.use("/api/events", eventRoutes);
 app.use("/api/announcements", announcementRoutes);
@@ -28,6 +29,7 @@ app.use("/api/registrations", registrationRoutes);
 app.use("/api/board-members", boardMemberRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 

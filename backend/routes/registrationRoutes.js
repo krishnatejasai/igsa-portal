@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -8,8 +9,9 @@ const {
   deleteRegistration,
 } = require("../controllers/registrationController");
 
-router.get("/", getRegistrations);
 router.post("/", createRegistration);
-router.delete("/:id", deleteRegistration);
+
+router.get("/", protect, getRegistrations);
+router.delete("/:id", protect, deleteRegistration);
 
 module.exports = router;
