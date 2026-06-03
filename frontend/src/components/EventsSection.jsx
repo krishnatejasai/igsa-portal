@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 function EventsSection() {
   const [events, setEvents] = useState([]);
@@ -8,7 +9,7 @@ function EventsSection() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/events");
+        const response = await fetch(`${API_BASE_URL}/api/events`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch events");

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 function EventRegistration() {
   const { id } = useParams();
@@ -19,7 +20,7 @@ function EventRegistration() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/events/${id}`);
+        const response = await fetch(`${API_BASE_URL}/api/events/${id}`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch event");
@@ -45,7 +46,7 @@ function EventRegistration() {
 
   const handleRegister = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/registrations", {
+      const response = await fetch(`${API_BASE_URL}/api/registrations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

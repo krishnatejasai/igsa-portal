@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function AdminEvents() {
   const [events, setEvents] = useState([]);
@@ -8,7 +9,7 @@ function AdminEvents() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/events");
+      const response = await fetch(`${API_BASE_URL}/api/events`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch events");
@@ -36,7 +37,7 @@ function AdminEvents() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/events/${id}`, {
   method: "DELETE",
   headers: {
     Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function AdminMessages() {
   const [messages, setMessages] = useState([]);
@@ -7,7 +8,7 @@ function AdminMessages() {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/messages", {
+      const response = await fetch(`${API_BASE_URL}/api/messages`, {
   headers: {
     Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
   },
@@ -39,7 +40,7 @@ function AdminMessages() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/messages/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/messages/${id}`, {
   method: "DELETE",
   headers: {
     Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,

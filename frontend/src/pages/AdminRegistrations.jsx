@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function AdminRegistrations() {
   const [registrations, setRegistrations] = useState([]);
@@ -9,7 +10,7 @@ function AdminRegistrations() {
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/registrations", {
+        const response = await fetch(`${API_BASE_URL}/api/registrations`, {
   headers: {
     Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
   },

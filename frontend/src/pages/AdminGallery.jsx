@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function AdminGallery() {
   const [photos, setPhotos] = useState([]);
@@ -8,7 +9,7 @@ function AdminGallery() {
 
   const fetchPhotos = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/gallery");
+      const response = await fetch(`${API_BASE_URL}/api/gallery`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch gallery photos");
@@ -36,7 +37,7 @@ function AdminGallery() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/gallery/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/gallery/${id}`, {
   method: "DELETE",
   headers: {
     Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function Dashboard() {
   const [stats, setStats] = useState([
@@ -27,21 +28,21 @@ const [
   galleryRes,
   messagesRes,
 ] = await Promise.all([
-  fetch("http://localhost:5000/api/events"),
+  fetch(`${API_BASE_URL}/api/events`),
 
-  fetch("http://localhost:5000/api/registrations", {
+  fetch(`${API_BASE_URL}/api/registrations`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   }),
 
-  fetch("http://localhost:5000/api/board-members"),
+  fetch(`${API_BASE_URL}/api/board-members`),
 
-  fetch("http://localhost:5000/api/announcements"),
+  fetch(`${API_BASE_URL}/api/announcements`),
 
-  fetch("http://localhost:5000/api/gallery"),
+  fetch(`${API_BASE_URL}/api/gallery`),
 
-  fetch("http://localhost:5000/api/messages", {
+  fetch(`${API_BASE_URL}/api/messages`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

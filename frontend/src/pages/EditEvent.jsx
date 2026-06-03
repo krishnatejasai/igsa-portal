@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function EditEvent() {
   const { id } = useParams();
@@ -20,7 +21,7 @@ function EditEvent() {
 useEffect(() => {
   const fetchEvent = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${id}`);
+      const response = await fetch(`${API_BASE_URL}/api/events/${id}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch event");
@@ -46,7 +47,7 @@ useEffect(() => {
 
 const handleUpdate = async () => {
   try {
-    const response = await fetch(`http://localhost:5000/api/events/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/events/${id}`, {
       method: "PUT",
       headers: {
   "Content-Type": "application/json",

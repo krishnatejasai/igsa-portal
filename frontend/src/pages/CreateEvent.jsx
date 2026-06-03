@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function CreateEvent() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function CreateEvent() {
 
   const handleSave = async () => {
   try {
-    const response = await fetch("http://localhost:5000/api/events", {
+    const response = await fetch(`${API_BASE_URL}/api/events`, {
       method: "POST",
       headers: {
   "Content-Type": "application/json",

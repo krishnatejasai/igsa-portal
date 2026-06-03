@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function CreateAnnouncement() {
   const navigate = useNavigate();
@@ -25,8 +26,7 @@ function CreateAnnouncement() {
     }
 
     try {
-      const response = await fetch(
-  "http://localhost:5000/api/announcements",
+      const response = fetch(`${API_BASE_URL}/api/announcements`, 
   {
     method: "POST",
     headers: {

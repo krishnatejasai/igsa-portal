@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function AdminBoard() {
   const [members, setMembers] = useState([]);
@@ -8,7 +9,7 @@ function AdminBoard() {
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/board-members");
+      const response = await fetch(`${API_BASE_URL}/api/board-members`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch board members");
@@ -36,8 +37,9 @@ function AdminBoard() {
     if (!confirmRemove) return;
 
     try {
-      const response = await fetch(
-  `http://localhost:5000/api/board-members/${id}`,
+      const response = await 
+  fetch(
+  `${API_BASE_URL}/api/board-members/${id}`,
   {
     method: "DELETE",
     headers: {

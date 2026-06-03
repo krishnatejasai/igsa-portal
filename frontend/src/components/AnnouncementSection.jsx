@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_BASE_URL from "../config/api";
 
 function AnnouncementSection() {
   const [announcements, setAnnouncements] = useState([]);
@@ -7,8 +8,7 @@ function AnnouncementSection() {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/announcements"
+        const response = await fetch(`${API_BASE_URL}/api/announcements`
         );
 
         if (!response.ok) {

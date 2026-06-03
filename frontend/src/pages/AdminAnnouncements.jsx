@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
+import API_BASE_URL from "../config/api";
 
 function AdminAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
@@ -8,7 +9,7 @@ function AdminAnnouncements() {
 
   const fetchAnnouncements = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/announcements");
+      const response = await fetch(`${API_BASE_URL}/api/announcements`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch announcements");
@@ -37,7 +38,7 @@ function AdminAnnouncements() {
 
     try {
       const response = await fetch(
-  `http://localhost:5000/api/announcements/${id}`,
+  fetch(`${API_BASE_URL}/api/announcements/${id}`,
   {
     method: "DELETE",
     headers: {

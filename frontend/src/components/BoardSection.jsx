@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_BASE_URL from "../config/api";
 
 function BoardSection() {
   const [members, setMembers] = useState([]);
@@ -7,7 +8,7 @@ function BoardSection() {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/board-members");
+        const response = await fetch(`${API_BASE_URL}/api/board-members`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch board members");
