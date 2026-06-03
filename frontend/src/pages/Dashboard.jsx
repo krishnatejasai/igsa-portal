@@ -1,55 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 
 function Dashboard() {
-  const defaultEventsCount = 3;
+  const [stats, setStats] = useState([
+    [0, "Total Events"],
+    [0, "Registrations"],
+    [0, "Board Members"],
+    [0, "Announcements"],
+  ]);
 
-  const [eventsCount] = useState(() => {
-    const savedEvents = JSON.parse(localStorage.getItem("igsaEvents")) || [];
-    return defaultEventsCount + savedEvents.length;
-  });
+  const [latestRegistration, setLatestRegistration] = useState(null);
+  const [latestAnnouncement, setLatestAnnouncement] = useState(null);
+  const [latestEvent, setLatestEvent] = useState(null);
 
-  const [registrationsCount] = useState(() => {
-    const registrations =
-      JSON.parse(localStorage.getItem("igsaRegistrations")) || [];
-    return registrations.length;
-  });
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [eventsRes, registrationsRes, boardRes, announcementsRes, galleryRes, messagesRes] =
+  await Promise.all([
+    fetch("http://localhost:5000/api/events"),
+    fetch("http://localhost:5000/api/registrations"),
+    fetch("http://localhost:5000/api/board-members"),
+    fetch("http://localhost:5000/api/announcements"),
+    fetch("http://localhost:5000/api/gallery"),
+    fetch("http://localhost:5000/api/messages"),
+  ]);
 
-  const [galleryCount] = useState(() => {
-    const gallery = JSON.parse(localStorage.getItem("igsaGallery")) || [];
-    return gallery.length;
-  });
+const events = await eventsRes.json();
+const registrations = await registrationsRes.json();
+const boardMembers = await boardRes.json();
+const announcements = await announcementsRes.json();
+const gallery = await galleryRes.json();
+const messages = await messagesRes.json();
 
-  const [messagesCount] = useState(() => {
-    const messages = JSON.parse(localStorage.getItem("igsaMessages")) || [];
-    return messages.length;
-  });
+setStats([
+  [events.length, "Total Events"],
+  [registrations.length, "Registrations"],
+  [gallery.length, "Gallery Photos"],
+  [messages.length, "Messages"],
+]);
 
-  const [latestRegistration] = useState(() => {
-    const registrations =
-      JSON.parse(localStorage.getItem("igsaRegistrations")) || [];
-    return registrations.length > 0
-      ? registrations[registrations.length - 1]
-      : null;
-  });
+setLatestEvent(events[0] || null);
+setLatestRegistration(registrations[0] || null);
+setLatestAnnouncement(announcements[0] || null);
+      } catch (error) {
+        console.error(error);
+        alert("Unable to load dashboard data.");
+      }
+    };
 
-  const [latestGallery] = useState(() => {
-    const gallery = JSON.parse(localStorage.getItem("igsaGallery")) || [];
-    return gallery.length > 0 ? gallery[gallery.length - 1] : null;
-  });
-
-  const [latestMessage] = useState(() => {
-    const messages = JSON.parse(localStorage.getItem("igsaMessages")) || [];
-    return messages.length > 0 ? messages[messages.length - 1] : null;
-  });
-
-  const stats = [
-    [eventsCount, "Total Events"],
-    [registrationsCount, "Registrations"],
-    [galleryCount, "Gallery Photos"],
-    [messagesCount, "Messages"],
-  ];
+    fetchDashboardData();
+  }, []);
 
   return (
     <AdminLayout>
@@ -63,8 +65,7 @@ function Dashboard() {
         </h1>
 
         <p className="text-slate-600 mt-2">
-          Manage IGSA events, registrations, gallery updates, and student
-          messages.
+          Manage IGSA events, registrations, board members, and announcements.
         </p>
       </div>
 
@@ -105,22 +106,22 @@ function Dashboard() {
             </Link>
 
             <Link
-              to="/admin/gallery/upload"
+              to="/admin/board/create"
               className="text-left border border-slate-200 rounded-2xl p-5 hover:bg-blue-950 hover:text-white transition"
             >
-              <span className="font-bold">Upload Gallery Photos</span>
+              <span className="font-bold">Add Board Member</span>
               <p className="text-sm opacity-80 mt-2">
-                Add event memories to gallery.
+                Add or update IGSA board members.
               </p>
             </Link>
 
             <Link
-              to="/admin/messages"
+              to="/admin/announcements/create"
               className="text-left border border-slate-200 rounded-2xl p-5 hover:bg-blue-950 hover:text-white transition"
             >
-              <span className="font-bold">View Messages</span>
+              <span className="font-bold">Post Announcement</span>
               <p className="text-sm opacity-80 mt-2">
-                Read student questions and inquiries.
+                Share updates with students.
               </p>
             </Link>
           </div>
@@ -131,6 +132,11 @@ function Dashboard() {
 
           <div className="space-y-5 text-blue-100">
             <div>
+              <p className="font-semibold text-white">Latest Event</p>
+              <p>{latestEvent ? latestEvent.title : "No events yet"}</p>
+            </div>
+
+            <div>
               <p className="font-semibold text-white">Latest Registration</p>
               <p>
                 {latestRegistration
@@ -140,20 +146,11 @@ function Dashboard() {
             </div>
 
             <div>
-              <p className="font-semibold text-white">Latest Gallery Upload</p>
+              <p className="font-semibold text-white">Latest Announcement</p>
               <p>
-                {latestGallery
-                  ? `${latestGallery.album} photo uploaded`
-                  : "No gallery uploads yet"}
-              </p>
-            </div>
-
-            <div>
-              <p className="font-semibold text-white">Latest Message</p>
-              <p>
-                {latestMessage
-                  ? `${latestMessage.name}: ${latestMessage.subject}`
-                  : "No messages yet"}
+                {latestAnnouncement
+                  ? latestAnnouncement.title
+                  : "No announcements yet"}
               </p>
             </div>
           </div>

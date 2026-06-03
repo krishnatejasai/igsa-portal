@@ -9,20 +9,29 @@ function EditAnnouncement() {
   const [announcement, setAnnouncement] = useState({
     title: "",
     date: "",
-    message: "",
+    description: "",
   });
 
   useEffect(() => {
-    const savedAnnouncements =
-      JSON.parse(localStorage.getItem("igsaAnnouncements")) || [];
+    const fetchAnnouncement = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/announcements/${id}`
+        );
 
-    const selectedAnnouncement = savedAnnouncements.find(
-      (item) => String(item.id) === id
-    );
+        if (!response.ok) {
+          throw new Error("Failed to fetch announcement");
+        }
 
-    if (selectedAnnouncement) {
-      setAnnouncement(selectedAnnouncement);
-    }
+        const data = await response.json();
+        setAnnouncement(data);
+      } catch (error) {
+        console.error(error);
+        alert("Unable to load announcement details.");
+      }
+    };
+
+    fetchAnnouncement();
   }, [id]);
 
   const handleChange = (e) => {
@@ -32,25 +41,29 @@ function EditAnnouncement() {
     });
   };
 
-  const handleUpdate = () => {
-    if (!announcement.title.trim()) {
-      alert("Please enter announcement title.");
-      return;
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/announcements/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(announcement),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update announcement");
+      }
+
+      alert("Announcement updated successfully!");
+      navigate("/admin/announcements");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while updating the announcement.");
     }
-
-    const savedAnnouncements =
-      JSON.parse(localStorage.getItem("igsaAnnouncements")) || [];
-
-    const updatedAnnouncements = savedAnnouncements.map((item) =>
-      String(item.id) === id ? announcement : item
-    );
-
-    localStorage.setItem(
-      "igsaAnnouncements",
-      JSON.stringify(updatedAnnouncements)
-    );
-
-    navigate("/admin/announcements");
   };
 
   return (
@@ -87,10 +100,10 @@ function EditAnnouncement() {
         </div>
 
         <div>
-          <label className="font-semibold text-blue-950">Message</label>
+          <label className="font-semibold text-blue-950">Description</label>
           <textarea
-            name="message"
-            value={announcement.message}
+            name="description"
+            value={announcement.description}
             onChange={handleChange}
             className="w-full mt-2 border border-slate-300 p-4 rounded-xl h-36"
           />

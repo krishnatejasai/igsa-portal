@@ -22,35 +22,40 @@ function UploadGallery() {
     reader.readAsDataURL(file);
   };
 
-  const handleSave = () => {
-  if (!album.trim()) {
-    alert("Please enter an album name.");
-    return;
-  }
+  const handleSave = async () => {
+    if (!album.trim()) {
+      alert("Please enter an album name.");
+      return;
+    }
 
-  if (!image) {
-    alert("Please upload a JPG, PNG, or WEBP image.");
-    return;
-  }
+    if (!image) {
+      alert("Please upload a JPG, PNG, or WEBP image.");
+      return;
+    }
 
-  const savedGallery =
-    JSON.parse(localStorage.getItem("igsaGallery")) || [];
+    try {
+      const response = await fetch("http://localhost:5000/api/gallery", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          album,
+          image,
+        }),
+      });
 
-  const newPhoto = {
-    id: Date.now(),
-    album,
-    image,
+      if (!response.ok) {
+        throw new Error("Failed to upload photo");
+      }
+
+      alert("Photo uploaded successfully!");
+      navigate("/admin/gallery");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while uploading photo.");
+    }
   };
-
-  localStorage.setItem(
-    "igsaGallery",
-    JSON.stringify([...savedGallery, newPhoto])
-  );
-
-  alert("Photo uploaded successfully!");
-
-  navigate("/admin/gallery");
-};
 
   return (
     <AdminLayout>
@@ -60,11 +65,8 @@ function UploadGallery() {
 
       <div className="bg-white rounded-3xl shadow-md p-8 max-w-4xl">
         <div className="space-y-6">
-
           <div>
-            <label className="font-semibold">
-              Album Name
-            </label>
+            <label className="font-semibold">Album Name</label>
 
             <input
               value={album}
@@ -75,14 +77,12 @@ function UploadGallery() {
           </div>
 
           <div>
-            <label className="font-semibold">
-              Upload Image
-            </label>
+            <label className="font-semibold">Upload Image</label>
 
             <input
-  type="file"
-  accept=".jpg,.jpeg,.png,.webp"
-  onChange={handleImage}
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp"
+              onChange={handleImage}
               className="w-full mt-2 border p-4 rounded-xl"
             />
           </div>
@@ -101,7 +101,6 @@ function UploadGallery() {
           >
             Save Photo
           </button>
-
         </div>
       </div>
     </AdminLayout>

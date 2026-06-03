@@ -1,54 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 
 function AdminBoard() {
-  const defaultMembers = [
-    { id: 1, name: "Sai Sri Krishna Teja Sanku", position: "President", isDefault: true },
-    { id: 2, name: "Drushtant Patil", position: "Vice President", isDefault: true },
-    { id: 3, name: "Simha Kishore Reddy", position: "Treasurer", isDefault: true },
-    { id: 4, name: "Lohith Maricharla", position: "Executive Secretary", isDefault: true },
-    { id: 5, name: "Riddhi Nijhawan", position: "Creative Director", isDefault: true },
-    { id: 6, name: "Jatin Salve", position: "Event Director", isDefault: true },
-    { id: 7, name: "Anitha Madapakula", position: "Event Manager", isDefault: true },
-    { id: 8, name: "Pavan Karthik Chila", position: "Social Media Manager", isDefault: true },
-    { id: 9, name: "Ayush Ranjan", position: "Marketing Manager", isDefault: true },
-    { id: 10, name: "Himanshu Potham Shetty", position: "IT Director", isDefault: true },
-    { id: 11, name: "Atish Maragur", position: "PR Director", isDefault: true },
-  ];
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [members, setMembers] = useState(() => {
-    const savedMembers =
-      JSON.parse(localStorage.getItem("igsaBoardMembers")) || [];
+  const fetchMembers = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/board-members");
 
-    return [...defaultMembers, ...savedMembers];
-  });
+      if (!response.ok) {
+        throw new Error("Failed to fetch board members");
+      }
 
-  const handleRemove = (id, isDefault) => {
-    if (isDefault) {
-      alert("Default board members cannot be removed.");
-      return;
+      const data = await response.json();
+      setMembers(data);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to load board members.");
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  const handleRemove = async (id) => {
     const confirmRemove = window.confirm(
       "Are you sure you want to remove this board member?"
     );
 
     if (!confirmRemove) return;
 
-    const savedMembers =
-      JSON.parse(localStorage.getItem("igsaBoardMembers")) || [];
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/board-members/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-    const updatedSavedMembers = savedMembers.filter(
-      (member) => member.id !== id
-    );
+      if (!response.ok) {
+        throw new Error("Failed to remove board member");
+      }
 
-    localStorage.setItem(
-      "igsaBoardMembers",
-      JSON.stringify(updatedSavedMembers)
-    );
-
-    setMembers((prev) => prev.filter((member) => member.id !== id));
+      setMembers((prev) => prev.filter((member) => member._id !== id));
+    } catch (error) {
+      console.error(error);
+      alert("Unable to remove board member.");
+    }
   };
 
   return (
@@ -73,60 +76,62 @@ function AdminBoard() {
       </div>
 
       <div className="bg-white rounded-3xl shadow-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-blue-950 text-white">
-            <tr>
-              <th className="text-left p-5">Name</th>
-              <th className="text-left p-5">Role</th>
-              <th className="text-left p-5">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {members.map((member) => (
-              <tr key={member.id} className="border-b hover:bg-slate-50">
-                <td className="p-5 flex items-center gap-4">
-                  {member.image ? (
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-blue-950 text-white flex items-center justify-center font-bold">
-                      {member.name
-                        .split(" ")
-                        .map((word) => word[0])
-                        .join("")
-                        .slice(0, 2)}
-                    </div>
-                  )}
-
-                  <span>{member.name}</span>
-                </td>
-
-                <td className="p-5">
-                  <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm font-semibold">
-                    {member.position}
-                  </span>
-                </td>
-
-                <td className="p-5 space-x-3">
-                  <button className="bg-blue-950 text-white px-4 py-2 rounded-xl">
-                    Edit
-                  </button>
-
-                  <button
-                    onClick={() => handleRemove(member.id, member.isDefault)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-xl"
-                  >
-                    Remove
-                  </button>
-                </td>
+        {loading ? (
+          <p className="p-6 text-slate-500">Loading board members...</p>
+        ) : members.length === 0 ? (
+          <p className="p-6 text-slate-500">No board members found.</p>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-blue-950 text-white">
+              <tr>
+                <th className="text-left p-5">Name</th>
+                <th className="text-left p-5">Role</th>
+                <th className="text-left p-5">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {members.map((member) => (
+                <tr key={member._id} className="border-b hover:bg-slate-50">
+                  <td className="p-5 flex items-center gap-4">
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-blue-950 text-white flex items-center justify-center font-bold">
+                        {member.name
+                          .split(" ")
+                          .map((word) => word[0])
+                          .join("")
+                          .slice(0, 2)}
+                      </div>
+                    )}
+
+                    <span>{member.name}</span>
+                  </td>
+
+                  <td className="p-5">
+                    <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm font-semibold">
+                      {member.position}
+                    </span>
+                  </td>
+
+                  <td className="p-5">
+                    <button
+                      onClick={() => handleRemove(member._id)}
+                      className="bg-red-500 text-white px-4 py-2 rounded-xl"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </AdminLayout>
   );

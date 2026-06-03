@@ -1,59 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 
 function AdminAnnouncements() {
-  const defaultAnnouncements = [
-    {
-      id: 1,
-      title: "Fall 2026 Orientation Registration Open",
-      date: "June 2026",
-      isDefault: true,
-    },
-    {
-      id: 2,
-      title: "Diwali Event Planning Meeting",
-      date: "July 2026",
-      isDefault: true,
-    },
-    {
-      id: 3,
-      title: "Welcome New Graduate Students",
-      date: "August 2026",
-      isDefault: true,
-    },
-  ];
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [announcements, setAnnouncements] = useState(() => {
-    const saved =
-      JSON.parse(localStorage.getItem("igsaAnnouncements")) || [];
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/announcements");
 
-    return [...defaultAnnouncements, ...saved];
-  });
+      if (!response.ok) {
+        throw new Error("Failed to fetch announcements");
+      }
 
-  const handleDelete = (id, isDefault) => {
-    if (isDefault) {
-      alert("Default sample announcements cannot be deleted.");
-      return;
+      const data = await response.json();
+      setAnnouncements(data);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to load announcements.");
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
+
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this announcement?"
     );
 
     if (!confirmDelete) return;
 
-    const saved =
-      JSON.parse(localStorage.getItem("igsaAnnouncements")) || [];
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/announcements/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-    const updatedSaved = saved.filter((item) => item.id !== id);
+      if (!response.ok) {
+        throw new Error("Failed to delete announcement");
+      }
 
-    localStorage.setItem(
-      "igsaAnnouncements",
-      JSON.stringify(updatedSaved)
-    );
-
-    setAnnouncements((prev) => prev.filter((item) => item.id !== id));
+      setAnnouncements((prev) =>
+        prev.filter((item) => item._id !== id)
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Unable to delete announcement.");
+    }
   };
 
   return (
@@ -78,40 +78,46 @@ function AdminAnnouncements() {
       </div>
 
       <div className="bg-white rounded-3xl shadow-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-blue-950 text-white">
-            <tr>
-              <th className="text-left p-5">Announcement</th>
-              <th className="text-left p-5">Date</th>
-              <th className="text-left p-5">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {announcements.map((item) => (
-              <tr key={item.id} className="border-b hover:bg-slate-50">
-                <td className="p-5">{item.title}</td>
-                <td className="p-5">{item.date}</td>
-
-                <td className="p-5 space-x-3">
-                  <Link
-                    to={`/admin/announcements/edit/${item.id}`}
-                    className="bg-blue-950 text-white px-4 py-2 rounded-xl"
-                  >
-                    Edit
-                  </Link>
-
-                  <button
-                    onClick={() => handleDelete(item.id, item.isDefault)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-xl"
-                  >
-                    Delete
-                  </button>
-                </td>
+        {loading ? (
+          <p className="p-6 text-slate-500">Loading announcements...</p>
+        ) : announcements.length === 0 ? (
+          <p className="p-6 text-slate-500">No announcements found.</p>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-blue-950 text-white">
+              <tr>
+                <th className="text-left p-5">Announcement</th>
+                <th className="text-left p-5">Date</th>
+                <th className="text-left p-5">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {announcements.map((item) => (
+                <tr key={item._id} className="border-b hover:bg-slate-50">
+                  <td className="p-5">{item.title}</td>
+                  <td className="p-5">{item.date}</td>
+
+                  <td className="p-5 space-x-3">
+                    <Link
+                      to={`/admin/announcements/edit/${item._id}`}
+                      className="bg-blue-950 text-white px-4 py-2 rounded-xl"
+                    >
+                      Edit
+                    </Link>
+
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="bg-red-500 text-white px-4 py-2 rounded-xl"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </AdminLayout>
   );

@@ -9,6 +9,7 @@ function CreateBoardMember() {
     name: "",
     position: "",
     email: "",
+    description: "",
     image: "",
   });
 
@@ -36,23 +37,31 @@ function CreateBoardMember() {
     reader.readAsDataURL(file);
   };
 
-  const handleSave = () => {
-    const savedMembers =
-      JSON.parse(localStorage.getItem("igsaBoardMembers")) || [];
+  const handleSave = async () => {
+    if (!member.name.trim() || !member.position.trim()) {
+      alert("Please enter name and position.");
+      return;
+    }
 
-    const newMember = {
-      id: Date.now(),
-      ...member,
-    };
+    try {
+      const response = await fetch("http://localhost:5000/api/board-members", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(member),
+      });
 
-    savedMembers.push(newMember);
+      if (!response.ok) {
+        throw new Error("Failed to create board member");
+      }
 
-    localStorage.setItem(
-      "igsaBoardMembers",
-      JSON.stringify(savedMembers)
-    );
-
-    navigate("/admin/board");
+      alert("Board member added successfully!");
+      navigate("/admin/board");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while adding board member.");
+    }
   };
 
   return (
@@ -62,9 +71,9 @@ function CreateBoardMember() {
       </h1>
 
       <div className="bg-white rounded-3xl shadow-md p-8 max-w-4xl space-y-6">
-
         <input
           name="name"
+          value={member.name}
           placeholder="Full Name"
           onChange={handleChange}
           className="w-full border p-4 rounded-xl"
@@ -72,6 +81,7 @@ function CreateBoardMember() {
 
         <input
           name="position"
+          value={member.position}
           placeholder="Position"
           onChange={handleChange}
           className="w-full border p-4 rounded-xl"
@@ -79,9 +89,18 @@ function CreateBoardMember() {
 
         <input
           name="email"
+          value={member.email}
           placeholder="Email"
           onChange={handleChange}
           className="w-full border p-4 rounded-xl"
+        />
+
+        <textarea
+          name="description"
+          value={member.description}
+          placeholder="Short Description / Responsibilities"
+          onChange={handleChange}
+          className="w-full border p-4 rounded-xl h-32"
         />
 
         <input
@@ -105,7 +124,6 @@ function CreateBoardMember() {
         >
           Save Member
         </button>
-
       </div>
     </AdminLayout>
   );

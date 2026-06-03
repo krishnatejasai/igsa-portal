@@ -15,22 +15,29 @@ function ContactSection() {
     });
   };
 
-  const handleSubmit = () => {
-    const savedMessages =
-      JSON.parse(localStorage.getItem("igsaMessages")) || [];
+  const handleSubmit = async () => {
+  if (
+    !form.name.trim() ||
+    !form.email.trim() ||
+    !form.subject.trim() ||
+    !form.message.trim()
+  ) {
+    alert("Please fill all fields.");
+    return;
+  }
 
-    const newMessage = {
-      id: Date.now(),
-      ...form,
-      date: new Date().toLocaleDateString(),
-    };
+  try {
+    const response = await fetch("http://localhost:5000/api/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
 
-    savedMessages.push(newMessage);
-
-    localStorage.setItem(
-      "igsaMessages",
-      JSON.stringify(savedMessages)
-    );
+    if (!response.ok) {
+      throw new Error("Failed to send message");
+    }
 
     alert("Message sent successfully!");
 
@@ -40,7 +47,11 @@ function ContactSection() {
       subject: "",
       message: "",
     });
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong while sending message.");
+  }
+};
 
   return (
     <section className="py-24 bg-blue-950 text-white">

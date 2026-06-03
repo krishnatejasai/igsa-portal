@@ -8,7 +8,7 @@ function CreateAnnouncement() {
   const [announcement, setAnnouncement] = useState({
     title: "",
     date: "",
-    message: "",
+    description: "",
   });
 
   const handleChange = (e) => {
@@ -18,26 +18,31 @@ function CreateAnnouncement() {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!announcement.title.trim()) {
       alert("Please enter announcement title.");
       return;
     }
 
-    const saved =
-      JSON.parse(localStorage.getItem("igsaAnnouncements")) || [];
+    try {
+      const response = await fetch("http://localhost:5000/api/announcements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(announcement),
+      });
 
-    const newAnnouncement = {
-      id: Date.now(),
-      ...announcement,
-    };
+      if (!response.ok) {
+        throw new Error("Failed to create announcement");
+      }
 
-    localStorage.setItem(
-      "igsaAnnouncements",
-      JSON.stringify([...saved, newAnnouncement])
-    );
-
-    navigate("/admin/announcements");
+      alert("Announcement created successfully!");
+      navigate("/admin/announcements");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while creating the announcement.");
+    }
   };
 
   return (
@@ -76,10 +81,10 @@ function CreateAnnouncement() {
         </div>
 
         <div>
-          <label className="font-semibold text-blue-950">Message</label>
+          <label className="font-semibold text-blue-950">Description</label>
           <textarea
-            name="message"
-            value={announcement.message}
+            name="description"
+            value={announcement.description}
             onChange={handleChange}
             className="w-full mt-2 border border-slate-300 p-4 rounded-xl h-36"
             placeholder="Write announcement details..."

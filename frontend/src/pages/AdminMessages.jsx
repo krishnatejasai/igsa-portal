@@ -1,23 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 
 function AdminMessages() {
-  const [messages, setMessages] = useState(() => {
-    return JSON.parse(localStorage.getItem("igsaMessages")) || [];
-  });
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleDelete = (id) => {
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/messages");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch messages");
+      }
+
+      const data = await response.json();
+      setMessages(data);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to load messages.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this message?"
     );
 
     if (!confirmDelete) return;
 
-    const updatedMessages = messages.filter((message) => message.id !== id);
+    try {
+      const response = await fetch(`http://localhost:5000/api/messages/${id}`, {
+        method: "DELETE",
+      });
 
-    localStorage.setItem("igsaMessages", JSON.stringify(updatedMessages));
+      if (!response.ok) {
+        throw new Error("Failed to delete message");
+      }
 
-    setMessages(updatedMessages);
+      setMessages((prevMessages) =>
+        prevMessages.filter((message) => message._id !== id)
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Unable to delete message.");
+    }
   };
 
   return (
@@ -29,7 +61,11 @@ function AdminMessages() {
         </p>
       </div>
 
-      {messages.length === 0 ? (
+      {loading ? (
+        <div className="bg-white rounded-3xl shadow-md p-10 text-center">
+          <p className="text-slate-500 text-lg">Loading messages...</p>
+        </div>
+      ) : messages.length === 0 ? (
         <div className="bg-white rounded-3xl shadow-md p-10 text-center">
           <p className="text-slate-500 text-lg">No messages yet.</p>
         </div>
@@ -37,7 +73,7 @@ function AdminMessages() {
         <div className="grid gap-6">
           {messages.map((message) => (
             <div
-              key={message.id}
+              key={message._id}
               className="bg-white rounded-3xl shadow-md p-6 border border-slate-200"
             >
               <div className="flex justify-between gap-6">
@@ -51,12 +87,12 @@ function AdminMessages() {
                   </p>
 
                   <p className="text-orange-600 font-semibold mt-1">
-                    {message.date}
+                    {new Date(message.createdAt).toLocaleDateString()}
                   </p>
                 </div>
 
                 <button
-                  onClick={() => handleDelete(message.id)}
+                  onClick={() => handleDelete(message._id)}
                   className="bg-red-500 text-white px-5 py-2 rounded-xl font-bold h-fit"
                 >
                   Delete

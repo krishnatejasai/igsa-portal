@@ -1,12 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 
 function AdminRegistrations() {
-  const [registrations] = useState(() => {
-    return JSON.parse(localStorage.getItem("igsaRegistrations")) || [];
-  });
-
+  const [registrations, setRegistrations] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRegistrations = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/registrations");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch registrations");
+        }
+
+        const data = await response.json();
+        setRegistrations(data);
+      } catch (error) {
+        console.error(error);
+        alert("Unable to load registrations.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRegistrations();
+  }, []);
 
   const filteredRegistrations = registrations.filter((student) =>
     `${student.name} ${student.email} ${student.phone} ${student.eventTitle} ${student.program}`
@@ -20,19 +40,31 @@ function AdminRegistrations() {
       return;
     }
 
-    const headers = ["Name", "Email", "Phone", "Event", "Program"];
+    const headers = [
+      "Name",
+      "Email",
+      "Phone",
+      "UFID",
+      "Event",
+      "Program",
+      "Dietary Preference",
+    ];
 
     const rows = registrations.map((student) => [
       student.name,
       student.email,
       student.phone,
+      student.ufid,
       student.eventTitle,
       student.program,
+      student.dietaryPreference,
     ]);
 
     const csvContent = [
       headers.join(","),
-      ...rows.map((row) => row.join(",")),
+      ...rows.map((row) =>
+        row.map((value) => `"${value || ""}"`).join(",")
+      ),
     ].join("\n");
 
     const blob = new Blob([csvContent], {
@@ -79,40 +111,53 @@ function AdminRegistrations() {
       />
 
       <div className="bg-white rounded-3xl shadow-md overflow-x-auto">
-        <table className="w-full min-w-[900px]">
-          <thead className="bg-blue-950 text-white">
-            <tr>
-              <th className="p-4 text-left">Name</th>
-              <th className="p-4 text-left">Email</th>
-              <th className="p-4 text-left">Phone</th>
-              <th className="p-4 text-left">Event</th>
-              <th className="p-4 text-left">Program</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredRegistrations.length === 0 ? (
+        {loading ? (
+          <p className="p-6 text-slate-500">Loading registrations...</p>
+        ) : (
+          <table className="w-full min-w-[1100px]">
+            <thead className="bg-blue-950 text-white">
               <tr>
-                <td
-                  colSpan="5"
-                  className="p-6 text-center text-slate-500"
-                >
-                  No registrations found
-                </td>
+                <th className="p-4 text-left">Name</th>
+                <th className="p-4 text-left">Email</th>
+                <th className="p-4 text-left">Phone</th>
+                <th className="p-4 text-left">UFID</th>
+                <th className="p-4 text-left">Event</th>
+                <th className="p-4 text-left">Program</th>
+                <th className="p-4 text-left">Dietary</th>
               </tr>
-            ) : (
-              filteredRegistrations.map((student) => (
-                <tr key={student.id} className="border-b hover:bg-slate-50">
-                  <td className="p-4">{student.name}</td>
-                  <td className="p-4">{student.email}</td>
-                  <td className="p-4">{student.phone}</td>
-                  <td className="p-4">{student.eventTitle}</td>
-                  <td className="p-4">{student.program}</td>
+            </thead>
+
+            <tbody>
+              {filteredRegistrations.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="7"
+                    className="p-6 text-center text-slate-500"
+                  >
+                    No registrations found
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                filteredRegistrations.map((student) => (
+                  <tr
+                    key={student._id}
+                    className="border-b hover:bg-slate-50"
+                  >
+                    <td className="p-4">{student.name}</td>
+                    <td className="p-4">{student.email}</td>
+                    <td className="p-4">{student.phone}</td>
+                    <td className="p-4">{student.ufid}</td>
+                    <td className="p-4">{student.eventTitle}</td>
+                    <td className="p-4">{student.program}</td>
+                    <td className="p-4">
+                      {student.dietaryPreference || "None"}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </AdminLayout>
   );

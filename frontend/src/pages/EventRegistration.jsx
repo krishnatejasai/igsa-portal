@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 function EventRegistration() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -14,14 +16,25 @@ function EventRegistration() {
     dietaryPreference: "",
   });
 
-  const allEvents = [
-    { id: 1, title: "Fall 2026 Orientation" },
-    { id: 2, title: "Diwali Night" },
-    { id: 3, title: "Networking Session" },
-    ...(JSON.parse(localStorage.getItem("igsaEvents")) || []),
-  ];
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/events/${id}`);
 
-  const selectedEvent = allEvents.find((event) => String(event.id) === id);
+        if (!response.ok) {
+          throw new Error("Failed to fetch event");
+        }
+
+        const data = await response.json();
+        setSelectedEvent(data);
+      } catch (error) {
+        console.error(error);
+        alert("Unable to load event details.");
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({
@@ -30,35 +43,41 @@ function EventRegistration() {
     });
   };
 
-  const handleRegister = () => {
-    const existingRegistrations =
-      JSON.parse(localStorage.getItem("igsaRegistrations")) || [];
+  const handleRegister = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/registrations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          eventId: id,
+          eventTitle: selectedEvent?.title || "IGSA Event",
+          ...form,
+        }),
+      });
 
-    const newRegistration = {
-      id: Date.now(),
-      eventId: id,
-      eventTitle: selectedEvent?.title || "IGSA Event",
-      ...form,
-    };
+      if (!response.ok) {
+        throw new Error("Failed to register");
+      }
 
-    localStorage.setItem(
-      "igsaRegistrations",
-      JSON.stringify([...existingRegistrations, newRegistration])
-    );
-
-    alert("Registration successful!");
-    navigate("/");
+      alert("Registration successful!");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while registering.");
+    }
   };
 
   return (
     <main className="min-h-screen bg-slate-100 flex items-center justify-center px-6 py-16">
       <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-2xl">
         <h1 className="text-4xl font-bold text-blue-950 mb-2">
-  Register for {selectedEvent?.title}
-</h1>
+          Register for {selectedEvent?.title || "IGSA Event"}
+        </h1>
 
         <p className="text-orange-600 font-semibold mb-8">
-          {selectedEvent?.title || "IGSA Event"}
+          {selectedEvent?.date} • {selectedEvent?.location}
         </p>
 
         <div className="space-y-5">
@@ -71,8 +90,7 @@ function EventRegistration() {
           />
 
           <input
-  required
-  name="email"
+            name="email"
             value={form.email}
             onChange={handleChange}
             placeholder="UF Email"
