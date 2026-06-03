@@ -1,8 +1,23 @@
 import { Routes, Route } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
-
 import Home from "./pages/Home";
+import AdminLogin from "./pages/AdminLogin";
+import Dashboard from "./pages/Dashboard";
+import AdminEvents from "./pages/AdminEvents";
+import CreateEvent from "./pages/CreateEvent";
+import AdminRegistrations from "./pages/AdminRegistrations";
+import AdminGallery from "./pages/AdminGallery";
+import AdminBoard from "./pages/AdminBoard";
+import AdminAnnouncements from "./pages/AdminAnnouncements";
+import EventRegistration from "./pages/EventRegistration";
+import EditEvent from "./pages/EditEvent";
+import UploadGallery from "./pages/UploadGallery";
+import CreateAnnouncement from "./pages/CreateAnnouncement";
+import EditAnnouncement from "./pages/EditAnnouncement";
+import CreateBoardMember from "./pages/CreateBoardMember";
+import Board from "./pages/Board";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminMessages from "./pages/AdminMessages";
 
 function Placeholder({ title }) {
   return (
@@ -17,25 +32,138 @@ function Placeholder({ title }) {
 function App() {
   return (
     <>
-      <Navbar />
+      {!window.location.pathname.startsWith("/admin") && <Navbar />}
 
       <Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/about" element={<Placeholder title="About" />} />
+  <Route path="/board" element={<Board />} />
+  <Route path="/events" element={<Placeholder title="Events" />} />
+  <Route path="/gallery" element={<Placeholder title="Gallery" />} />
+  <Route path="/contact" element={<Placeholder title="Contact" />} />
 
-        <Route path="/" element={<Home />} />
+  {/* Public */}
+  <Route path="/events/register/:id" element={<EventRegistration />} />
+  <Route path="/admin/login" element={<AdminLogin />} />
 
-        <Route path="/about" element={<Placeholder title="About" />} />
+  {/* Protected Admin Routes */}
+  <Route
+    path="/admin/dashboard"
+    element={
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/board" element={<Placeholder title="Board" />} />
+  <Route
+    path="/admin/events"
+    element={
+      <ProtectedRoute>
+        <AdminEvents />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/events" element={<Placeholder title="Events" />} />
+  <Route
+    path="/admin/events/create"
+    element={
+      <ProtectedRoute>
+        <CreateEvent />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/gallery" element={<Placeholder title="Gallery" />} />
+  <Route
+    path="/admin/events/edit/:id"
+    element={
+      <ProtectedRoute>
+        <EditEvent />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/contact" element={<Placeholder title="Contact" />} />
+  <Route
+    path="/admin/registrations"
+    element={
+      <ProtectedRoute>
+        <AdminRegistrations />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/admin/login" element={<Placeholder title="Board Login" />} />
+  <Route
+    path="/admin/gallery"
+    element={
+      <ProtectedRoute>
+        <AdminGallery />
+      </ProtectedRoute>
+    }
+  />
 
-      </Routes>
+  <Route
+    path="/admin/gallery/upload"
+    element={
+      <ProtectedRoute>
+        <UploadGallery />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/admin/board"
+    element={
+      <ProtectedRoute>
+        <AdminBoard />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/admin/board/create"
+    element={
+      <ProtectedRoute>
+        <CreateBoardMember />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/admin/announcements"
+    element={
+      <ProtectedRoute>
+        <AdminAnnouncements />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/admin/announcements/create"
+    element={
+      <ProtectedRoute>
+        <CreateAnnouncement />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/admin/announcements/edit/:id"
+    element={
+      <ProtectedRoute>
+        <EditAnnouncement />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/admin/messages"
+    element={
+      <ProtectedRoute>
+        <AdminMessages />
+      </ProtectedRoute>
+    }
+  />
+</Routes>
     </>
   );
 }

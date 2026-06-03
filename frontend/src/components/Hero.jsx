@@ -6,19 +6,21 @@ function Hero() {
 
         <div>
 
-          <p className="text-orange-400 font-semibold mb-4">
-            University of Florida
-          </p>
+          
 
-          <h1 className="text-5xl lg:text-6xl font-extrabold leading-tight">
-            Welcome to IGSA UF
-          </h1>
+          <h1 className="text-5xl lg:text-6xl font-bold leading-tight mb-6 max-w-3xl">
+  Indian Graduate Student Association
+</h1>
 
-          <p className="mt-6 text-lg text-blue-100 leading-relaxed">
-            Connecting Indian Graduate Students through
-            cultural events, professional networking,
-            academic support, and lifelong friendships.
-          </p>
+<h2 className="text-3xl font-semibold text-orange-400 mb-6">
+  University of Florida
+</h2>
+<p className="text-xl text-slate-200 leading-relaxed max-w-xl mb-10">
+  Connecting Indian Graduate Students through
+  cultural celebrations, professional networking, leadership,
+  academic support, and lifelong friendships.
+</p>
+
 
           <div className="flex gap-4 mt-8">
             <button className="bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-full font-semibold">
@@ -31,6 +33,7 @@ function Hero() {
           </div>
 
         </div>
+        
 
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
 

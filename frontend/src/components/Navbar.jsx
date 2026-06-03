@@ -10,16 +10,16 @@ function Navbar() {
           <img
             src={logo}
             alt="IGSA UF"
-            className="h-12 w-auto"
+            className="h-16 w-auto"
           />
 
           <div>
             <h1 className="text-lg font-bold text-blue-950">
-              IGSA UF
+              Indian Graduate Student Association
             </h1>
 
             <p className="text-xs text-slate-500">
-              Indian Graduate Student Association
+              University of Florida
             </p>
           </div>
         </Link>
