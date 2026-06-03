@@ -28,11 +28,21 @@ function EventsSection() {
   }, []);
 
   return (
-    <section className="py-28 bg-slate-100">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center text-blue-950 mb-14">
-          Upcoming Events
-        </h2>
+    <section className="py-16 md:py-24 bg-slate-100">
+      <div className="max-w-6xl mx-auto px-5 md:px-6">
+        <div className="text-center mb-9 md:mb-12">
+          <p className="text-orange-600 font-semibold text-sm mb-2">
+            Events
+          </p>
+
+          <h2 className="text-3xl md:text-4xl font-bold text-blue-950">
+            Upcoming Events
+          </h2>
+
+          <p className="text-sm md:text-base text-slate-600 mt-3">
+            Join upcoming IGSA events, workshops, and community activities.
+          </p>
+        </div>
 
         {loading ? (
           <p className="text-center text-slate-600">Loading events...</p>
@@ -41,36 +51,31 @@ function EventsSection() {
             No upcoming events yet.
           </p>
         ) : (
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7">
             {events.map((event) => (
               <div
                 key={event._id}
-                className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
+                className="bg-white border border-slate-200 rounded-2xl p-3 md:p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
-                <h3 className="text-2xl font-bold text-blue-900 mb-3">
-                  {event.title}
-                </h3>
-
-                <p className="text-orange-500 font-semibold mb-2">
+                <p className="text-orange-500 text-sm font-semibold mb-2">
                   {event.date}
                 </p>
 
-                <p className="text-slate-600 mb-4">
+                <h3 className="text-lg md:text-xl font-bold text-blue-950 mb-2 line-clamp-2">
+                  {event.title}
+                </h3>
+
+                <p className="text-slate-600 text-sm mb-3 line-clamp-2">
                   {event.description}
                 </p>
 
-                <p className="text-sm text-slate-500 mb-1">
-                  <span className="font-semibold">Time:</span> {event.time}
-                </p>
-
-                <p className="text-sm text-slate-500 mb-4">
-                  <span className="font-semibold">Location:</span>{" "}
-                  {event.location}
+                <p className="text-xs md:text-sm text-slate-500 mb-4">
+                  {event.time} • {event.location}
                 </p>
 
                 <Link
                   to={`/events/register/${event._id}`}
-                  className="inline-block bg-orange-500 text-white px-5 py-3 rounded-xl font-bold hover:bg-orange-600"
+                  className="inline-flex items-center bg-orange-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-semibold text-xs md:text-sm hover:bg-orange-600 transition"
                 >
                   Register
                 </Link>

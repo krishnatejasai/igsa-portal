@@ -17,91 +17,90 @@ function ContactSection() {
   };
 
   const handleSubmit = async () => {
-  if (
-    !form.name.trim() ||
-    !form.email.trim() ||
-    !form.subject.trim() ||
-    !form.message.trim()
-  ) {
-    alert("Please fill all fields.");
-    return;
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/messages`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to send message");
+    if (
+      !form.name.trim() ||
+      !form.email.trim() ||
+      !form.subject.trim() ||
+      !form.message.trim()
+    ) {
+      alert("Please fill all fields.");
+      return;
     }
 
-    alert("Message sent successfully!");
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-    setForm({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    });
-  } catch (error) {
-    console.error(error);
-    alert("Something went wrong while sending message.");
-  }
-};
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      alert("Message sent successfully!");
+
+      setForm({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while sending message.");
+    }
+  };
 
   return (
-    <section className="py-24 bg-blue-950 text-white">
-      <div className="max-w-6xl mx-auto px-6">
+    <section className="py-16 md:py-24 bg-blue-950 text-white">
+      <div className="max-w-6xl mx-auto px-5 md:px-6">
+        <div className="text-center mb-10 md:mb-12">
+          <p className="text-orange-400 font-semibold">Contact Us</p>
 
-        <div className="text-center mb-12">
-          <p className="text-orange-400 font-semibold">
-            Contact Us
-          </p>
-
-          <h2 className="text-5xl font-bold mt-2">
+          <h2 className="text-3xl md:text-5xl font-bold mt-2">
             Get In Touch
           </h2>
 
-          <p className="text-slate-300 mt-4">
-            Have questions about IGSA, events, housing, academics,
-            or student life at UF? We are here to help.
+          <p className="text-sm md:text-base text-slate-300 mt-4 max-w-3xl mx-auto">
+            Have questions about IGSA, events, housing, academics, or student
+            life at UF? We are here to help.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10">
-
-          <div className="space-y-6">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-10">
+          <div className="space-y-4 md:space-y-6">
             <div>
-              <h3 className="font-bold text-xl">Email</h3>
-              <p className="text-slate-300">igsa@ufl.edu</p>
+              <h3 className="font-bold text-base md:text-xl">Email</h3>
+              <p className="text-sm md:text-base text-slate-300">
+                igsa@ufl.edu
+              </p>
             </div>
 
             <div>
-              <h3 className="font-bold text-xl">Location</h3>
-              <p className="text-slate-300">Gainesville, Florida</p>
+              <h3 className="font-bold text-base md:text-xl">Location</h3>
+              <p className="text-sm md:text-base text-slate-300">
+                Gainesville, Florida
+              </p>
             </div>
 
             <div>
-              <h3 className="font-bold text-xl">Instagram</h3>
-              <p className="text-slate-300">@igsa.uf</p>
+              <h3 className="font-bold text-base md:text-xl">Instagram</h3>
+              <p className="text-sm md:text-base text-slate-300">@igsa.uf</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 text-black">
-            <div className="space-y-4">
-
+          <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 text-black">
+            <div className="space-y-3 md:space-y-4">
               <input
                 type="text"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Your Name"
-                className="w-full border p-4 rounded-xl"
+                className="w-full border p-3 md:p-4 rounded-xl text-sm md:text-base"
               />
 
               <input
@@ -110,7 +109,7 @@ function ContactSection() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="Your Email"
-                className="w-full border p-4 rounded-xl"
+                className="w-full border p-3 md:p-4 rounded-xl text-sm md:text-base"
               />
 
               <input
@@ -119,7 +118,7 @@ function ContactSection() {
                 value={form.subject}
                 onChange={handleChange}
                 placeholder="Subject"
-                className="w-full border p-4 rounded-xl"
+                className="w-full border p-3 md:p-4 rounded-xl text-sm md:text-base"
               />
 
               <textarea
@@ -127,19 +126,17 @@ function ContactSection() {
                 value={form.message}
                 onChange={handleChange}
                 placeholder="Message"
-                className="w-full border p-4 rounded-xl h-32"
+                className="w-full border p-3 md:p-4 rounded-xl h-28 md:h-32 text-sm md:text-base"
               />
 
               <button
                 onClick={handleSubmit}
-                className="bg-orange-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-600"
+                className="bg-orange-500 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold hover:bg-orange-600 text-sm md:text-base"
               >
                 Send Message
               </button>
-
             </div>
           </div>
-
         </div>
       </div>
     </section>

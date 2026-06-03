@@ -38,7 +38,7 @@ function AdminAnnouncements() {
 
     try {
       const response = await fetch(
-  fetch(`${API_BASE_URL}/api/announcements/${id}`,
+  `${API_BASE_URL}/api/announcements/${id}`,
   {
     method: "DELETE",
     headers: {

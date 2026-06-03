@@ -18,6 +18,7 @@ import CreateBoardMember from "./pages/CreateBoardMember";
 import Board from "./pages/Board";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminMessages from "./pages/AdminMessages";
+import About from "./pages/About";
 
 function Placeholder({ title }) {
   return (
@@ -36,7 +37,7 @@ function App() {
 
       <Routes>
   <Route path="/" element={<Home />} />
-  <Route path="/about" element={<Placeholder title="About" />} />
+  <Route path="/about" element={<About />} />
   <Route path="/board" element={<Board />} />
   <Route path="/events" element={<Placeholder title="Events" />} />
   <Route path="/gallery" element={<Placeholder title="Gallery" />} />

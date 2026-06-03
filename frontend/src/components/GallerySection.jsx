@@ -65,30 +65,32 @@ function GallerySection() {
     galleryItems.length > 0 ? galleryItems : defaultGallery;
 
   return (
-    <section className="py-24 bg-slate-100">
-      <div className="max-w-7xl mx-auto px-6">
-        <p className="text-orange-500 font-semibold text-center mb-2">
-          Gallery
-        </p>
+    <section className="py-16 md:py-24 bg-slate-100">
+      <div className="max-w-7xl mx-auto px-5 md:px-6">
+        <div className="text-center mb-10 md:mb-14">
+          <p className="text-orange-600 font-semibold text-sm mb-2">
+            Gallery
+          </p>
 
-        <h2 className="text-5xl font-bold text-center text-blue-950 mb-4">
-          Event Highlights
-        </h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-blue-950">
+            Event Highlights
+          </h2>
 
-        <p className="text-center text-slate-600 mb-14">
-          A glimpse of IGSA events, celebrations, and community memories.
-        </p>
+          <p className="text-sm md:text-base text-slate-600 mt-3 max-w-2xl mx-auto">
+            A glimpse of IGSA events, celebrations, and community memories.
+          </p>
+        </div>
 
         {loading ? (
           <p className="text-center text-slate-500">Loading gallery...</p>
         ) : (
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {finalGalleryItems.slice(0, 8).map((item) => (
               <div
                 key={item.id}
-                className="group overflow-hidden rounded-3xl shadow-lg bg-white"
+                className="group overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition"
               >
-                <div className="h-64 overflow-hidden">
+                <div className="h-36 sm:h-44 md:h-64 overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -96,15 +98,15 @@ function GallerySection() {
                       w-full
                       h-full
                       object-cover
-                      group-hover:scale-110
+                      group-hover:scale-105
                       transition
                       duration-500
                     "
                   />
                 </div>
 
-                <div className="p-5">
-                  <h3 className="font-bold text-lg text-blue-950">
+                <div className="p-3 md:p-5">
+                  <h3 className="font-bold text-sm md:text-lg text-blue-950 leading-snug">
                     {item.title}
                   </h3>
                 </div>
