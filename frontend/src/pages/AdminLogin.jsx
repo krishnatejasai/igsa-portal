@@ -2,13 +2,17 @@ import { useState } from "react";
 import API_BASE_URL from "../config/api";
 
 function AdminLogin() {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
     setError("");
+
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter both email and password.");
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
@@ -17,7 +21,7 @@ function AdminLogin() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          email: email.trim().toLowerCase(),
           password,
         }),
       });
@@ -31,6 +35,9 @@ function AdminLogin() {
 
       localStorage.setItem("igsaAdminToken", data.token);
       localStorage.setItem("igsaAdminUser", JSON.stringify(data.admin));
+      localStorage.setItem("igsaAdminName", data.admin?.name || "Admin");
+      localStorage.setItem("igsaAdminRole", data.admin?.role || "board-member");
+      localStorage.setItem("igsaAdminLoggedIn", "true");
 
       window.location.replace("/admin/dashboard");
     } catch (error) {

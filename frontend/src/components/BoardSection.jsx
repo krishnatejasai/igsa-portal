@@ -12,7 +12,7 @@ function BoardSection() {
         if (!response.ok) throw new Error("Failed to fetch board members");
 
         const data = await response.json();
-        setMembers(data);
+        setMembers(data.slice(0, 8));
       } catch (error) {
         console.error(error);
       } finally {
@@ -22,19 +22,6 @@ function BoardSection() {
 
     fetchMembers();
   }, []);
-
-  const executiveBoard = members.filter((member) =>
-    ["President", "Vice President", "Treasurer", "Executive Secretary"].includes(
-      member.position
-    )
-  );
-
-  const directors = members.filter(
-    (member) =>
-      !["President", "Vice President", "Treasurer", "Executive Secretary"].includes(
-        member.position
-      )
-  );
 
   const getInitials = (name) =>
     name
@@ -56,7 +43,7 @@ function BoardSection() {
       <div className="max-w-7xl mx-auto px-5 md:px-6">
         <div className="text-center mb-10 md:mb-14">
           <p className="text-orange-600 font-semibold text-sm mb-2">
-            Executive Board
+            IGSA Board
           </p>
 
           <h2 className="text-3xl md:text-4xl font-bold text-blue-950">
@@ -65,8 +52,7 @@ function BoardSection() {
 
           <p className="mt-3 text-sm md:text-base text-slate-600 max-w-3xl mx-auto">
             Our board supports Indian graduate students through cultural,
-            professional, and community-driven initiatives at the University of
-            Florida.
+            professional, and community-driven initiatives at UF.
           </p>
         </div>
 
@@ -75,81 +61,40 @@ function BoardSection() {
             Board members will be updated soon.
           </p>
         ) : (
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-7 mb-12 md:mb-16">
-              {executiveBoard.map((member) => (
-                <div
-                  key={member._id}
-                  className="bg-slate-50 border border-slate-200 rounded-2xl p-4 md:p-7 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-                >
-                  {member.image ? (
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-16 h-16 md:w-24 md:h-24 mx-auto rounded-full object-cover mb-3 md:mb-5"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 md:w-24 md:h-24 mx-auto rounded-full bg-gradient-to-br from-blue-950 via-blue-800 to-orange-500 flex items-center justify-center text-white text-xl md:text-3xl font-bold mb-3 md:mb-5">
-                      {getInitials(member.name)}
-                    </div>
-                  )}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {members.map((member) => (
+              <div
+                key={member._id}
+                className="bg-slate-50 border border-slate-200 rounded-2xl p-4 md:p-5 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 min-h-[185px] md:min-h-[245px] flex flex-col items-center"
+              >
+                {member.image ? (
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover mb-3"
+                  />
+                ) : (
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-blue-950 via-blue-800 to-orange-500 flex items-center justify-center text-white text-xl md:text-2xl font-bold mb-3">
+                    {getInitials(member.name)}
+                  </div>
+                )}
 
-                  <h3 className="text-sm md:text-lg font-bold text-blue-950 leading-snug">
-                    {member.name}
-                  </h3>
+                <h3 className="text-sm md:text-lg font-bold text-blue-950 leading-snug">
+                  {member.name}
+                </h3>
 
-                  <p className="text-xs md:text-base text-orange-600 font-semibold mt-1 md:mt-2">
-                    {member.position}
+                <p className="text-xs md:text-sm text-orange-600 font-semibold mt-1">
+                  {member.position}
+                </p>
+
+                {member.description && (
+                  <p className="hidden md:block text-xs text-slate-600 mt-3 leading-relaxed line-clamp-2">
+                    {member.description}
                   </p>
-                </div>
-              ))}
-            </div>
-
-            {directors.length > 0 && (
-              <>
-                <div className="text-center mb-8 md:mb-10">
-                  <p className="text-orange-600 font-semibold text-sm mb-2">
-                    Directors & Managers
-                  </p>
-
-                  <h3 className="text-2xl md:text-3xl font-bold text-blue-950">
-                    Supporting Leadership
-                  </h3>
-                </div>
-
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
-                  {directors.map((member) => (
-                    <div
-                      key={member._id}
-                      className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 flex items-center gap-3 md:gap-4 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
-                    >
-                      {member.image ? (
-                        <img
-                          src={member.image}
-                          alt={member.name}
-                          className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-900 to-orange-500 flex items-center justify-center text-white font-bold text-sm md:text-base">
-                          {getInitials(member.name)}
-                        </div>
-                      )}
-
-                      <div>
-                        <h4 className="font-bold text-blue-950 text-sm md:text-base">
-                          {member.name}
-                        </h4>
-
-                        <p className="text-xs md:text-sm text-orange-600 font-semibold">
-                          {member.position}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </section>

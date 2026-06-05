@@ -19,6 +19,12 @@ import Board from "./pages/Board";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminMessages from "./pages/AdminMessages";
 import About from "./pages/About";
+import Events from "./pages/Events";
+import Gallery from "./pages/Gallery";
+import Contact from "./pages/Contact";
+import GalleryAlbum from "./pages/GalleryAlbum";
+import AdminUsers from "./pages/AdminUsers";
+import AdminCheckIn from "./pages/AdminCheckIn";
 
 function Placeholder({ title }) {
   return (
@@ -39,15 +45,33 @@ function App() {
   <Route path="/" element={<Home />} />
   <Route path="/about" element={<About />} />
   <Route path="/board" element={<Board />} />
-  <Route path="/events" element={<Placeholder title="Events" />} />
-  <Route path="/gallery" element={<Placeholder title="Gallery" />} />
-  <Route path="/contact" element={<Placeholder title="Contact" />} />
+  <Route path="/events" element={<Events />} />
+  <Route path="/gallery" element={<Gallery />} />
+  <Route path="/contact" element={<Contact />} />
+  <Route path="/gallery/:id" element={<GalleryAlbum />} />
+  
 
   {/* Public */}
   <Route path="/events/register/:id" element={<EventRegistration />} />
   <Route path="/admin/login" element={<AdminLogin />} />
 
   {/* Protected Admin Routes */}
+  <Route
+  path="/admin/check-in"
+  element={
+    <ProtectedRoute>
+      <AdminCheckIn />
+    </ProtectedRoute>
+  }
+/>
+  <Route
+  path="/admin/users"
+  element={
+    <ProtectedRoute>
+      <AdminUsers />
+    </ProtectedRoute>
+  }
+/>
   <Route
     path="/admin/dashboard"
     element={

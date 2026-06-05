@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
+import { canManageAnnouncements } from "../config/permissions";
 
 function AdminAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const allowAnnouncementManagement = canManageAnnouncements();
 
   const fetchAnnouncements = async () => {
     try {
@@ -73,12 +75,14 @@ function AdminAnnouncements() {
           </p>
         </div>
 
-        <Link
-          to="/admin/announcements/create"
-          className="bg-orange-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-orange-600"
-        >
-          + New Announcement
-        </Link>
+        {allowAnnouncementManagement && (
+  <Link
+    to="/admin/announcements/create"
+    className="bg-orange-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-orange-600"
+  >
+    + New Announcement
+  </Link>
+)}
       </div>
 
       <div className="bg-white rounded-3xl shadow-md overflow-hidden">
@@ -102,21 +106,29 @@ function AdminAnnouncements() {
                   <td className="p-5">{item.title}</td>
                   <td className="p-5">{item.date}</td>
 
-                  <td className="p-5 space-x-3">
-                    <Link
-                      to={`/admin/announcements/edit/${item._id}`}
-                      className="bg-blue-950 text-white px-4 py-2 rounded-xl"
-                    >
-                      Edit
-                    </Link>
+                  <td className="p-5">
+  {allowAnnouncementManagement ? (
+    <div className="flex gap-3">
+      <Link
+        to={`/admin/announcements/edit/${item._id}`}
+        className="bg-blue-950 text-white px-4 py-2 rounded-xl"
+      >
+        Edit
+      </Link>
 
-                    <button
-                      onClick={() => handleDelete(item._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-xl"
-                    >
-                      Delete
-                    </button>
-                  </td>
+      <button
+        onClick={() => handleDelete(item._id)}
+        className="bg-red-500 text-white px-4 py-2 rounded-xl"
+      >
+        Delete
+      </button>
+    </div>
+  ) : (
+    <span className="text-sm text-slate-500 font-semibold">
+      View Only
+    </span>
+  )}
+</td>
                 </tr>
               ))}
             </tbody>

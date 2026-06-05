@@ -1,41 +1,53 @@
 const Gallery = require("../models/Gallery");
 
-const createPhoto = async (req, res) => {
+const createAlbum = async (req, res) => {
   try {
-    const photo = await Gallery.create(req.body);
-    res.status(201).json(photo);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+    const { album, photos } = req.body;
 
-const getPhotos = async (req, res) => {
-  try {
-    const photos = await Gallery.find().sort({ createdAt: -1 });
-    res.json(photos);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const deletePhoto = async (req, res) => {
-  try {
-    const photo = await Gallery.findById(req.params.id);
-
-    if (!photo) {
-      return res.status(404).json({ message: "Photo not found" });
+    if (!album || !photos || photos.length === 0) {
+      return res.status(400).json({
+        message: "Album name and at least one photo are required",
+      });
     }
 
-    await photo.deleteOne();
+    const newAlbum = await Gallery.create({
+      album,
+      photos,
+    });
 
-    res.json({ message: "Photo deleted successfully" });
+    res.status(201).json(newAlbum);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getAlbums = async (req, res) => {
+  try {
+    const albums = await Gallery.find().sort({ createdAt: -1 });
+    res.json(albums);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteAlbum = async (req, res) => {
+  try {
+    const album = await Gallery.findById(req.params.id);
+
+    if (!album) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    await album.deleteOne();
+
+    res.json({ message: "Album deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
 module.exports = {
-  createPhoto,
-  getPhotos,
-  deletePhoto,
+  createAlbum,
+  getAlbums,
+  deleteAlbum,
 };

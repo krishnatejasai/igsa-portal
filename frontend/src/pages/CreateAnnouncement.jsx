@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
+import { canManageAnnouncements } from "../config/permissions";
 
 function CreateAnnouncement() {
   const navigate = useNavigate();
@@ -11,6 +12,23 @@ function CreateAnnouncement() {
     date: "",
     description: "",
   });
+  const allowAnnouncementManagement = canManageAnnouncements();
+
+if (!allowAnnouncementManagement) {
+  return (
+    <AdminLayout>
+      <div className="bg-white rounded-3xl shadow-md p-10 text-center">
+        <h1 className="text-3xl font-bold text-red-600">
+          Access Denied
+        </h1>
+
+        <p className="text-slate-600 mt-3">
+          You do not have permission to create announcements.
+        </p>
+      </div>
+    </AdminLayout>
+  );
+}
 
   const handleChange = (e) => {
     setAnnouncement({

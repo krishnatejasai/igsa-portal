@@ -28,9 +28,14 @@ const eventSchema = new mongoose.Schema(
     },
 
     location: {
-      type: String,
-      required: true,
-    },
+  type: String,
+  required: true,
+},
+
+registrationOpen: {
+  type: Boolean,
+  default: true,
+},
 
     description: {
       type: String,

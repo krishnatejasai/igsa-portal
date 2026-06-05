@@ -4,14 +4,13 @@ const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 const {
-  createPhoto,
-  getPhotos,
-  deletePhoto,
+  createAlbum,
+  getAlbums,
+  deleteAlbum,
 } = require("../controllers/galleryController");
 
-router.get("/", getPhotos);
-
-router.post("/", protect, createPhoto);
-router.delete("/:id", protect, deletePhoto);
+router.get("/", getAlbums);
+router.post("/", protect, createAlbum);
+router.delete("/:id", protect, deleteAlbum);
 
 module.exports = router;

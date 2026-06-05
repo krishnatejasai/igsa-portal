@@ -6,7 +6,9 @@ const registerAdmin = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    const existingAdmin = await AdminUser.findOne({ email });
+    const existingAdmin = await AdminUser.findOne({
+      email: email.toLowerCase(),
+    });
 
     if (existingAdmin) {
       return res.status(400).json({
@@ -18,7 +20,7 @@ const registerAdmin = async (req, res) => {
 
     const admin = await AdminUser.create({
       name,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
       role,
     });
@@ -40,7 +42,9 @@ const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const admin = await AdminUser.findOne({ email });
+    const admin = await AdminUser.findOne({
+      email: email.toLowerCase(),
+    });
 
     if (!admin) {
       return res.status(401).json({
@@ -48,7 +52,10 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, admin.password);
+    const isMatch = await bcrypt.compare(
+      password,
+      admin.password
+    );
 
     if (!isMatch) {
       return res.status(401).json({
@@ -83,7 +90,85 @@ const loginAdmin = async (req, res) => {
   }
 };
 
+const getAdmins = async (req, res) => {
+  try {
+    const admins = await AdminUser.find()
+      .select("-password")
+      .sort({ createdAt: -1 });
+
+    res.json(admins);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const deleteAdmin = async (req, res) => {
+  try {
+    const admin = await AdminUser.findById(req.params.id);
+
+    if (!admin) {
+      return res.status(404).json({
+        message: "Admin user not found",
+      });
+    }
+
+    if (
+      admin._id.toString() === req.admin._id.toString()
+    ) {
+      return res.status(400).json({
+        message: "You cannot delete your own account",
+      });
+    }
+
+    await admin.deleteOne();
+
+    res.json({
+      message: "Admin user deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    const admin = await AdminUser.findById(req.admin._id);
+
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      admin.password
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Current password is incorrect",
+      });
+    }
+
+    admin.password = await bcrypt.hash(newPassword, 10);
+
+    await admin.save();
+
+    res.json({
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   registerAdmin,
   loginAdmin,
+  getAdmins,
+  deleteAdmin,
+  changePassword,
 };

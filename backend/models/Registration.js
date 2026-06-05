@@ -38,9 +38,36 @@ const registrationSchema = new mongoose.Schema(
       required: true,
     },
 
-    dietaryPreference: {
+    qrCode: {
       type: String,
-      default: "",
+      unique: true,
+      sparse: true,
+    },
+
+    status: {
+      type: String,
+      enum: ["registered", "waitlisted"],
+      default: "registered",
+    },
+
+    waitlistPosition: {
+      type: Number,
+      default: null,
+    },
+
+    promotedAt: {
+      type: Date,
+      default: null,
+    },
+
+    checkedIn: {
+      type: Boolean,
+      default: false,
+    },
+
+    checkedInAt: {
+      type: Date,
+      default: null,
     },
   },
   {

@@ -1,17 +1,26 @@
 const express = require("express");
-const { protect } = require("../middleware/authMiddleware");
-
-const router = express.Router();
+const { protect, requireRole } = require("../middleware/authMiddleware");
 
 const {
   createRegistration,
   getRegistrations,
   deleteRegistration,
+  checkInRegistration,
 } = require("../controllers/registrationController");
+
+const router = express.Router();
 
 router.post("/", createRegistration);
 
 router.get("/", protect, getRegistrations);
-router.delete("/:id", protect, deleteRegistration);
+
+router.post("/check-in", protect, checkInRegistration);
+
+router.delete(
+  "/:id",
+  protect,
+  requireRole("president", "vice-president"),
+  deleteRegistration
+);
 
 module.exports = router;

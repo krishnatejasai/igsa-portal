@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
+import { canDeleteMessages } from "../config/permissions";
+
 
 function AdminMessages() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const allowDeleteMessages = canDeleteMessages();
 
   const fetchMessages = async () => {
     try {
@@ -99,12 +102,23 @@ function AdminMessages() {
                   </p>
                 </div>
 
-                <button
-                  onClick={() => handleDelete(message._id)}
-                  className="bg-red-500 text-white px-5 py-2 rounded-xl font-bold h-fit"
-                >
-                  Delete
-                </button>
+                <div className="flex gap-2">
+  <a
+    href={`mailto:${message.email}`}
+    className="bg-blue-950 text-white px-4 py-2 rounded-xl"
+  >
+    Reply
+  </a>
+
+  {allowDeleteMessages && (
+    <button
+      onClick={() => handleDelete(message._id)}
+      className="bg-red-500 text-white px-4 py-2 rounded-xl"
+    >
+      Delete
+    </button>
+  )}
+</div>
               </div>
 
               <p className="text-slate-700 mt-5 leading-relaxed">

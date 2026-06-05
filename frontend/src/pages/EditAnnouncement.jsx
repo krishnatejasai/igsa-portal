@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
+import { canManageAnnouncements } from "../config/permissions";
 
 function EditAnnouncement() {
   const { id } = useParams();
   const navigate = useNavigate();
+const allowAnnouncementManagement = canManageAnnouncements();
 
   const [announcement, setAnnouncement] = useState({
     title: "",
@@ -33,6 +35,21 @@ function EditAnnouncement() {
 
     fetchAnnouncement();
   }, [id]);
+  if (!allowAnnouncementManagement) {
+  return (
+    <AdminLayout>
+      <div className="bg-white rounded-3xl shadow-md p-10 text-center">
+        <h1 className="text-3xl font-bold text-red-600">
+          Access Denied
+        </h1>
+
+        <p className="text-slate-600 mt-3">
+          You do not have permission to edit announcements.
+        </p>
+      </div>
+    </AdminLayout>
+  );
+}
 
   const handleChange = (e) => {
     setAnnouncement({

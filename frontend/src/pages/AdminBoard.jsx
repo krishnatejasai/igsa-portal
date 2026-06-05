@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
+import { canManageBoard } from "../config/permissions";
 
 function AdminBoard() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const allowBoardManagement = canManageBoard();
 
   const fetchMembers = async () => {
     try {
@@ -72,12 +74,14 @@ function AdminBoard() {
           </p>
         </div>
 
-        <Link
-          to="/admin/board/create"
-          className="bg-orange-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-orange-600"
-        >
-          + Add Member
-        </Link>
+        {allowBoardManagement && (
+  <Link
+    to="/admin/board/create"
+    className="bg-orange-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-orange-600"
+  >
+    + Add Member
+  </Link>
+)}
       </div>
 
       <div className="bg-white rounded-3xl shadow-md overflow-hidden">
@@ -125,13 +129,19 @@ function AdminBoard() {
                   </td>
 
                   <td className="p-5">
-                    <button
-                      onClick={() => handleRemove(member._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-xl"
-                    >
-                      Remove
-                    </button>
-                  </td>
+  {allowBoardManagement ? (
+    <button
+      onClick={() => handleRemove(member._id)}
+      className="bg-red-500 text-white px-4 py-2 rounded-xl"
+    >
+      Remove
+    </button>
+  ) : (
+    <span className="text-sm text-slate-500 font-semibold">
+      View Only
+    </span>
+  )}
+</td>
                 </tr>
               ))}
             </tbody>

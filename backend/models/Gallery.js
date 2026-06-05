@@ -7,9 +7,10 @@ const gallerySchema = new mongoose.Schema(
       required: true,
     },
 
-    image: {
-      type: String,
+    photos: {
+      type: [String],
       required: true,
+      default: [],
     },
   },
   {

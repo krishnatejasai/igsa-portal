@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
+import { canManageEvents } from "../config/permissions";
 
 function CreateEvent() {
   const navigate = useNavigate();
+  
 
   const [event, setEvent] = useState({
     title: "",
@@ -16,6 +18,23 @@ function CreateEvent() {
     description: "",
     registrationLink: "",
   });
+  const allowEventManagement = canManageEvents();
+
+if (!allowEventManagement) {
+  return (
+    <AdminLayout>
+      <div className="bg-white rounded-3xl shadow-md p-10 text-center">
+        <h1 className="text-3xl font-bold text-red-600">
+          Access Denied
+        </h1>
+
+        <p className="text-slate-600 mt-3">
+          Only the President and Vice President can create or edit events.
+        </p>
+      </div>
+    </AdminLayout>
+  );
+}
 
   const handleChange = (e) => {
     setEvent({

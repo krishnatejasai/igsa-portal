@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
+import { canManageBoard } from "../config/permissions";
 
 function CreateBoardMember() {
   const navigate = useNavigate();
@@ -13,6 +14,20 @@ function CreateBoardMember() {
     description: "",
     image: "",
   });
+  const allowBoardManagement = canManageBoard();
+
+if (!allowBoardManagement) {
+  return (
+    <AdminLayout>
+      <div className="bg-white rounded-3xl shadow-md p-10 text-center">
+        <h1 className="text-3xl font-bold text-red-600">Access Denied</h1>
+        <p className="text-slate-600 mt-3">
+          Only the President and Vice President can manage board members.
+        </p>
+      </div>
+    </AdminLayout>
+  );
+}
 
   const handleChange = (e) => {
     setMember({

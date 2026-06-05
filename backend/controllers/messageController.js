@@ -20,6 +20,12 @@ const getMessages = async (req, res) => {
 
 const deleteMessage = async (req, res) => {
   try {
+    if (req.admin.role !== "president" && req.admin.role !== "admin") {
+      return res.status(403).json({
+        message: "Only the President can delete messages.",
+      });
+    }
+
     const message = await Message.findById(req.params.id);
 
     if (!message) {

@@ -50,8 +50,12 @@ function Footer() {
 
         <div className="border-t border-slate-800 mt-10 pt-6 text-center">
           <p className="text-slate-500 text-sm">
-            © 2026 IGSA UF. All Rights Reserved.
-          </p>
+  © 2026 IGSA UF. All Rights Reserved.
+</p>
+
+<p className="text-slate-500 text-sm mt-2">
+  Website Designed & Developed by Sai Sri Krishna Teja Sanku
+</p>
         </div>
 
       </div>

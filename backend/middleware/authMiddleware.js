@@ -22,6 +22,12 @@ const protect = async (req, res, next) => {
 
     req.admin = await AdminUser.findById(decoded.id).select("-password");
 
+    if (!req.admin) {
+      return res.status(401).json({
+        message: "Admin account not found",
+      });
+    }
+
     next();
   } catch (error) {
     return res.status(401).json({
@@ -30,4 +36,22 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+const requireRole = (...roles) => {
+  return (req, res, next) => {
+    if (!req.admin) {
+      return res.status(401).json({
+        message: "Not authorized",
+      });
+    }
+
+    if (roles.includes(req.admin.role)) {
+      return next();
+    }
+
+    return res.status(403).json({
+      message: "Access denied. You do not have permission.",
+    });
+  };
+};
+
+module.exports = { protect, requireRole };

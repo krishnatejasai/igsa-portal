@@ -2,25 +2,53 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
+import { canManageGallery } from "../config/permissions";
 
 function UploadGallery() {
   const navigate = useNavigate();
+  
 
   const [album, setAlbum] = useState("");
-  const [image, setImage] = useState("");
+  const [photos, setPhotos] = useState([]);
+  const allowGalleryManagement = canManageGallery();
 
-  const handleImage = (e) => {
-    const file = e.target.files[0];
+if (!allowGalleryManagement) {
+  return (
+    <AdminLayout>
+      <div className="bg-white rounded-3xl shadow-md p-10 text-center">
+        <h1 className="text-3xl font-bold text-red-600">
+          Access Denied
+        </h1>
 
-    if (!file) return;
+        <p className="text-slate-600 mt-3">
+          Only authorized media or executive board members can upload gallery albums.
+        </p>
+      </div>
+    </AdminLayout>
+  );
+}
 
-    const reader = new FileReader();
+  const handleImages = (e) => {
+    const files = Array.from(e.target.files);
 
-    reader.onloadend = () => {
-      setImage(reader.result);
-    };
+    if (files.length === 0) return;
 
-    reader.readAsDataURL(file);
+    const readers = files.map(
+      (file) =>
+        new Promise((resolve) => {
+          const reader = new FileReader();
+
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+
+          reader.readAsDataURL(file);
+        })
+    );
+
+    Promise.all(readers).then((images) => {
+      setPhotos(images);
+    });
   };
 
   const handleSave = async () => {
@@ -29,8 +57,8 @@ function UploadGallery() {
       return;
     }
 
-    if (!image) {
-      alert("Please upload a JPG, PNG, or WEBP image.");
+    if (photos.length === 0) {
+      alert("Please upload at least one image.");
       return;
     }
 
@@ -38,70 +66,82 @@ function UploadGallery() {
       const response = await fetch(`${API_BASE_URL}/api/gallery`, {
         method: "POST",
         headers: {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
-},
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
+        },
         body: JSON.stringify({
           album,
-          image,
+          photos,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload photo");
+        throw new Error("Failed to upload album");
       }
 
-      alert("Photo uploaded successfully!");
+      alert("Album uploaded successfully!");
       navigate("/admin/gallery");
     } catch (error) {
       console.error(error);
-      alert("Something went wrong while uploading photo.");
+      alert("Something went wrong while uploading album.");
     }
   };
 
   return (
     <AdminLayout>
       <h1 className="text-5xl font-bold text-blue-950 mb-8">
-        Upload Gallery Photo
+        Upload Gallery Album
       </h1>
 
-      <div className="bg-white rounded-3xl shadow-md p-8 max-w-4xl">
+      <div className="bg-white rounded-3xl shadow-md p-8 max-w-5xl">
         <div className="space-y-6">
           <div>
-            <label className="font-semibold">Album Name</label>
+            <label className="font-semibold">Album / Event Name</label>
 
             <input
               value={album}
               onChange={(e) => setAlbum(e.target.value)}
               className="w-full mt-2 border p-4 rounded-xl"
-              placeholder="Diwali Night"
+              placeholder="Diwali Night 2026"
             />
           </div>
 
           <div>
-            <label className="font-semibold">Upload Image</label>
+            <label className="font-semibold">
+              Upload Photos
+            </label>
 
             <input
               type="file"
+              multiple
               accept=".jpg,.jpeg,.png,.webp"
-              onChange={handleImage}
+              onChange={handleImages}
               className="w-full mt-2 border p-4 rounded-xl"
             />
+
+            <p className="text-sm text-slate-500 mt-2">
+              You can select multiple photos for the same event album.
+            </p>
           </div>
 
-          {image && (
-            <img
-              src={image}
-              alt="preview"
-              className="w-full h-72 object-cover rounded-2xl"
-            />
+          {photos.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {photos.map((photo, index) => (
+                <img
+                  key={index}
+                  src={photo}
+                  alt={`preview-${index}`}
+                  className="w-full h-40 object-cover rounded-2xl"
+                />
+              ))}
+            </div>
           )}
 
           <button
             onClick={handleSave}
             className="bg-orange-500 text-white px-8 py-4 rounded-xl font-bold"
           >
-            Save Photo
+            Save Album
           </button>
         </div>
       </div>

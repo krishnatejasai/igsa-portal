@@ -71,24 +71,41 @@ function ContactSection() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 md:gap-10">
-          <div className="space-y-4 md:space-y-6">
-            <div>
+          <div className="grid md:grid-cols-1 gap-5">
+            <div className="bg-white/10 border border-white/10 rounded-2xl p-5">
               <h3 className="font-bold text-base md:text-xl">Email</h3>
-              <p className="text-sm md:text-base text-slate-300">
-                igsa@ufl.edu
-              </p>
+              <a
+                href="mailto:igsa@gmail.com"
+                className="text-sm md:text-base text-slate-300 hover:text-orange-400 transition"
+              >
+                igsa@gmail.com
+              </a>
             </div>
 
-            <div>
-              <h3 className="font-bold text-base md:text-xl">Location</h3>
-              <p className="text-sm md:text-base text-slate-300">
-                Gainesville, Florida
-              </p>
-            </div>
-
-            <div>
+            <div className="bg-white/10 border border-white/10 rounded-2xl p-5">
               <h3 className="font-bold text-base md:text-xl">Instagram</h3>
-              <p className="text-sm md:text-base text-slate-300">@igsa.uf</p>
+              <a
+                href="https://www.instagram.com/igsa.uf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm md:text-base text-slate-300 hover:text-orange-400 transition"
+              >
+                @igsa.uf
+              </a>
+            </div>
+
+            <div className="bg-white/10 border border-white/10 rounded-2xl p-5">
+              <h3 className="font-bold text-base md:text-xl">
+                WhatsApp Community
+              </h3>
+              <a
+                href="https://chat.whatsapp.com/KJKwl1eCzvM1FrBoahgoFs?mode=gi_t"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm md:text-base text-slate-300 hover:text-orange-400 transition"
+              >
+                Join IGSA WhatsApp Group
+              </a>
             </div>
           </div>
 

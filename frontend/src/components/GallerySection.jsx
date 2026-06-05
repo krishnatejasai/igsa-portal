@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API_BASE_URL from "../config/api";
+import { Link } from "react-router-dom";
 
 import orientation from "../assets/gallery/orientation.jpg";
 import diwali from "../assets/gallery/diwali.jpg";
@@ -9,23 +10,23 @@ import webinar from "../assets/gallery/webinar.jpg";
 const defaultGallery = [
   {
     id: 1,
-    title: "Orientation",
-    image: orientation,
+    album: "Orientation",
+    photos: [orientation],
   },
   {
     id: 2,
-    title: "Diwali Night",
-    image: diwali,
+    album: "Diwali Night",
+    photos: [diwali],
   },
   {
     id: 3,
-    title: "Holi",
-    image: holi,
+    album: "Holi",
+    photos: [holi],
   },
   {
     id: 4,
-    title: "Webinars",
-    image: webinar,
+    album: "Webinars",
+    photos: [webinar],
   },
 ];
 
@@ -43,14 +44,7 @@ function GallerySection() {
         }
 
         const data = await response.json();
-
-        const formattedPhotos = data.map((photo) => ({
-          id: photo._id,
-          title: photo.album,
-          image: photo.image,
-        }));
-
-        setGalleryItems(formattedPhotos);
+        setGalleryItems(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -67,51 +61,57 @@ function GallerySection() {
   return (
     <section className="py-16 md:py-24 bg-slate-100">
       <div className="max-w-7xl mx-auto px-5 md:px-6">
-        <div className="text-center mb-10 md:mb-14">
-          <p className="text-orange-600 font-semibold text-sm mb-2">
-            Gallery
-          </p>
+        <p className="text-orange-600 font-semibold text-center text-sm mb-2">
+          Gallery
+        </p>
 
-          <h2 className="text-3xl md:text-5xl font-bold text-blue-950">
-            Event Highlights
-          </h2>
+        <h2 className="text-3xl md:text-5xl font-bold text-center text-blue-950 mb-4">
+          Event Highlights
+        </h2>
 
-          <p className="text-sm md:text-base text-slate-600 mt-3 max-w-2xl mx-auto">
-            A glimpse of IGSA events, celebrations, and community memories.
-          </p>
-        </div>
+        <p className="text-center text-slate-600 text-sm md:text-base mb-10 md:mb-14">
+          A glimpse of IGSA events, celebrations, and community memories.
+        </p>
 
         {loading ? (
           <p className="text-center text-slate-500">Loading gallery...</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {finalGalleryItems.slice(0, 8).map((item) => (
-              <div
-                key={item.id}
-                className="group overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition"
-              >
-                <div className="h-36 sm:h-44 md:h-64 overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="
-                      w-full
-                      h-full
-                      object-cover
-                      group-hover:scale-105
-                      transition
-                      duration-500
-                    "
-                  />
-                </div>
+            {finalGalleryItems.slice(0, 8).map((item) => {
+              const coverImage = item.photos?.[0] || item.image;
 
-                <div className="p-3 md:p-5">
-                  <h3 className="font-bold text-sm md:text-lg text-blue-950 leading-snug">
-                    {item.title}
-                  </h3>
-                </div>
-              </div>
-            ))}
+              return (
+  <Link
+    to={`/gallery/${item._id || item.id}`}
+    key={item._id || item.id}
+    className="group overflow-hidden rounded-2xl md:rounded-3xl shadow-md bg-white"
+  >
+    <div className="h-40 md:h-64 overflow-hidden bg-slate-200">
+      {coverImage ? (
+        <img
+          src={coverImage}
+          alt={item.album}
+          className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-slate-400 text-sm">
+          No Image
+        </div>
+      )}
+    </div>
+
+    <div className="p-4 md:p-5">
+      <h3 className="font-bold text-sm md:text-lg text-blue-950">
+        {item.album}
+      </h3>
+
+      <p className="text-xs md:text-sm text-slate-500 mt-1">
+        {item.photos?.length || (item.image ? 1 : 0)} photos
+      </p>
+    </div>
+  </Link>
+);
+            })}
           </div>
         )}
       </div>
