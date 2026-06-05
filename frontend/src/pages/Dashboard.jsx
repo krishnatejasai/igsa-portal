@@ -127,9 +127,9 @@ const adminRole =
   </span>
 </div>
 
-        <h1 className="text-4xl font-bold text-blue-950 mt-2">
-          IGSA Board Dashboard
-        </h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-blue-950 mt-2">
+  IGSA Board Dashboard
+</h1>
 
         <p className="text-slate-600 mt-2">
           Track IGSA events, registrations, attendance, board members, and
@@ -137,7 +137,7 @@ const adminRole =
         </p>
       </div>
 
-      <div className="grid md:grid-cols-4 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
         {stats.map(([number, label]) => (
           <div key={label} className="bg-white rounded-2xl p-6 shadow-md">
             <h2 className="text-4xl font-bold text-orange-500">{number}</h2>
