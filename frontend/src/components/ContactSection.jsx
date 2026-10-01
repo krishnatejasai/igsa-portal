@@ -75,10 +75,10 @@ function ContactSection() {
             <div className="bg-white/10 border border-white/10 rounded-2xl p-5">
               <h3 className="font-bold text-base md:text-xl">Email</h3>
               <a
-                href="mailto:igsa@gmail.com"
+                href="mailto:igsa.uf@gmail.com"
                 className="text-sm md:text-base text-slate-300 hover:text-orange-400 transition"
               >
-                igsa@gmail.com
+                igsa.uf@gmail.com
               </a>
             </div>
 
@@ -113,6 +113,7 @@ function ContactSection() {
             <div className="space-y-3 md:space-y-4">
               <input
                 type="text"
+                aria-label="Your name"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
@@ -122,6 +123,7 @@ function ContactSection() {
 
               <input
                 type="email"
+                aria-label="Your email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
@@ -131,6 +133,7 @@ function ContactSection() {
 
               <input
                 type="text"
+                aria-label="Subject"
                 name="subject"
                 value={form.subject}
                 onChange={handleChange}
@@ -139,6 +142,7 @@ function ContactSection() {
               />
 
               <textarea
+                aria-label="Message"
                 name="message"
                 value={form.message}
                 onChange={handleChange}

@@ -17,7 +17,6 @@ app.get("/", (req, res) => {
   res.send("IGSA Portal API is running");
 });
 const eventRoutes = require("./routes/eventRoutes");
-const announcementRoutes = require("./routes/announcementRoutes");
 const registrationRoutes = require("./routes/registrationRoutes");
 const boardMemberRoutes = require("./routes/boardMemberRoutes");
 const messageRoutes = require("./routes/messageRoutes");
@@ -25,7 +24,6 @@ const galleryRoutes = require("./routes/galleryRoutes");
 const authRoutes = require("./routes/authRoutes");
 
 app.use("/api/events", eventRoutes);
-app.use("/api/announcements", announcementRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/board-members", boardMemberRoutes);
 app.use("/api/messages", messageRoutes);

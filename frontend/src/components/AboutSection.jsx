@@ -1,68 +1,13 @@
-function AboutSection() {
-  return (
-    <section className="py-20 bg-white">
-      <div className="max-w-6xl mx-auto px-6 text-center">
+import { Link } from 'react-router-dom';
 
-        <h2 className="text-5xl font-bold text-blue-950 mb-8">
-          About IGSA
-        </h2>
-
-        <p className="text-lg text-slate-600 leading-relaxed max-w-4xl mx-auto mb-16">
-          The Indian Graduate Student Association (IGSA) at the
-          University of Florida serves as a home away from home
-          for Indian graduate students.
-
-          We organize cultural celebrations, networking events,
-          professional development sessions, sports activities,
-          and community gatherings that help students connect,
-          grow, and thrive during their academic journey.
-        </p>
-
-        {/* Statistics */}
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-
-          <div className="bg-slate-50 rounded-2xl p-8 shadow-md">
-            <h3 className="text-4xl font-bold text-orange-500">
-              500+
-            </h3>
-            <p className="text-slate-600 mt-2">
-              Students Connected
-            </p>
-          </div>
-
-          <div className="bg-slate-50 rounded-2xl p-8 shadow-md">
-            <h3 className="text-4xl font-bold text-orange-500">
-              30+
-            </h3>
-            <p className="text-slate-600 mt-2">
-              Events Organized
-            </p>
-          </div>
-
-          <div className="bg-slate-50 rounded-2xl p-8 shadow-md">
-            <h3 className="text-4xl font-bold text-orange-500">
-              10+
-            </h3>
-            <p className="text-slate-600 mt-2">
-              Executive Members
-            </p>
-          </div>
-
-          <div className="bg-slate-50 rounded-2xl p-8 shadow-md">
-            <h3 className="text-4xl font-bold text-orange-500">
-              5+
-            </h3>
-            <p className="text-slate-600 mt-2">
-              Years of Impact
-            </p>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-  );
+const pillars = [
+  { number: '01', icon: '✺', title: 'Celebrate your roots.', text: 'From the colors of Holi to the lights of Diwali, bring a piece of home to campus.', label: 'Culture & celebrations', to: '/gallery', tone: 'peach' },
+  { number: '02', icon: '↗', title: 'Build your next chapter.', text: 'Meet new people, exchange ideas, and grow through shared experiences.', label: 'Connections & growth', to: '/events', tone: 'sage' },
+  { number: '03', icon: '⌂', title: 'Find your people.', text: 'A warm welcome, a familiar conversation, and a community to lean on.', label: 'Community & belonging', to: '/contact', tone: 'lavender' },
+];
+export default function AboutSection() {
+  return <section id="community" className="community-section"><div className="home-shell">
+    <div className="section-heading" data-reveal><div><p className="eyebrow">FAR FROM HOME. CLOSE TO EACH OTHER.</p><h2>More than an association.<br /><em>A place to belong.</em></h2></div><p>Graduate life is a big adventure. We’re here to make it a little more connected, colorful, and memorable.</p></div>
+    <div className="pillar-grid">{pillars.map((pillar, index) => <Link key={pillar.number} to={pillar.to} className={`pillar-card ${pillar.tone}`} data-reveal style={{ '--delay': `${index * 100}ms` }}><div className="pillar-top"><span>{pillar.number} /</span><span className="pillar-icon" aria-hidden="true">{pillar.icon}</span></div><h3>{pillar.title}</h3><p>{pillar.text}</p><div className="pillar-link">{pillar.label}<span>↗</span></div></Link>)}</div>
+  </div></section>;
 }
-
-export default AboutSection;

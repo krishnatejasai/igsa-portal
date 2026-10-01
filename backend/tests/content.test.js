@@ -21,7 +21,7 @@ test('gallery bounds database payload size', () => {
   assert.throws(() => galleryInput({ album: 'Event', photos: ['data:image/jpeg;base64,' + 'A'.repeat(8000001)] }), /too large/);
 });
 test('board profiles trim fields and discard unrecognized input', () => {
-  assert.deepEqual(boardInput({ name: ' Member ', position: ' President ', role: 'president' }), { name: 'Member', position: 'President', email: '', description: '', image: '' });
+  assert.deepEqual(boardInput({ name: ' Member ', position: ' President ', role: 'president' }), { name: 'Member', position: 'President', email: '', description: '', image: '', displayOrder: 1000 });
   assert.throws(() => boardInput({ name: ' ', position: 'President' }));
   assert.throws(() => boardInput({ name: 'Member', position: 'President', email: 'invalid' }));
   assert.throws(() => boardInput({ name: 'Member', position: 'President', image: 'javascript:bad' }));
@@ -53,4 +53,18 @@ test('malformed album update is rejected before database access', async t => {
   t.mock.method(Gallery, 'findByIdAndUpdate', () => assert.fail('must not access database'));
   const res = response(); await gallery.updateAlbum({ params: { id: 'id' }, body: { album: 'Event', externalUrl: 'http://example.com' } }, res);
   assert.equal(res.code, 400);
+});
+
+test('board display order accepts integers and rejects invalid ordering input', () => {
+  assert.equal(boardInput({ name: 'Member', position: 'President', displayOrder: 10 }).displayOrder, 10);
+  for (const displayOrder of [-1, 1.5, 10001, '10', null]) assert.throws(() => boardInput({ name: 'Member', position: 'President', displayOrder }));
+});
+
+test('board list sorts numeric display order while preserving legacy tie order', async t => {
+  t.mock.method(BoardMember, 'find', () => ({ sort: async () => [
+    { name: 'Legacy first' }, { name: 'Second', displayOrder: 20 },
+    { name: 'First', displayOrder: 10 }, { name: 'Legacy next', displayOrder: 1000 },
+  ] }));
+  const res = response(); await board.getBoardMembers({}, res);
+  assert.deepEqual(res.body.map(item => item.name), ['First', 'Second', 'Legacy first', 'Legacy next']);
 });

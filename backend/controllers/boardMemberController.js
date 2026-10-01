@@ -7,7 +7,7 @@ const createBoardMember = async (req, res) => {
   try { res.status(201).json(await Model.create(input)); } catch (error) { fail(res, error); }
 };
 const getBoardMembers = async (req, res) => {
-  try { res.json(await Model.find().sort({ createdAt: 1 })); } catch (error) { fail(res, error); }
+  try { const members = await Model.find().sort({ createdAt: 1 }); res.json(members.sort((a, b) => (a.displayOrder ?? 1000) - (b.displayOrder ?? 1000))); } catch (error) { fail(res, error); }
 };
 const getById = async (req, res) => {
   try { const item = await Model.findById(req.params.id); if (!item) return res.status(404).json({ message: "Not found" }); res.json(item); } catch (error) { fail(res, error); }

@@ -18,11 +18,9 @@ const adminRole =
     [0, "Board Members"],
     [0, "Gallery Albums"],
     [0, "Messages"],
-    [0, "Announcements"],
   ]);
 
   const [latestRegistration, setLatestRegistration] = useState(null);
-  const [latestAnnouncement, setLatestAnnouncement] = useState(null);
   const [latestEvent, setLatestEvent] = useState(null);
   const [eventInsights, setEventInsights] = useState([]);
 
@@ -35,7 +33,6 @@ const adminRole =
           eventsRes,
           registrationsRes,
           boardRes,
-          announcementsRes,
           galleryRes,
           messagesRes,
         ] = await Promise.all([
@@ -49,7 +46,6 @@ const adminRole =
 
           fetch(`${API_BASE_URL}/api/board-members`),
 
-          fetch(`${API_BASE_URL}/api/announcements`),
 
           fetch(`${API_BASE_URL}/api/gallery`),
 
@@ -63,7 +59,6 @@ const adminRole =
         const events = await eventsRes.json();
         const registrations = await registrationsRes.json();
         const boardMembers = await boardRes.json();
-        const announcements = await announcementsRes.json();
         const gallery = await galleryRes.json();
         const messages = await messagesRes.json();
 
@@ -84,12 +79,10 @@ const adminRole =
           [boardMembers.length, "Board Members"],
           [gallery.length, "Gallery Albums"],
           [messages.length, "Messages"],
-          [announcements.length, "Announcements"],
         ]);
 
         setLatestEvent(events[0] || null);
         setLatestRegistration(registrations[0] || null);
-        setLatestAnnouncement(announcements[0] || null);
 
         setEventInsights(
           events.slice(0, 5).map((event) => {
@@ -203,15 +196,7 @@ const adminRole =
               </p>
             </Link>
 
-            <Link
-              to="/admin/announcements/create"
-              className="text-left border border-slate-200 rounded-2xl p-5 hover:bg-blue-950 hover:text-white transition"
-            >
-              <span className="font-bold">Post Announcement</span>
-              <p className="text-sm opacity-80 mt-2">
-                Share updates with students.
-              </p>
-            </Link>
+
           </div>
         </div>
 
@@ -233,14 +218,7 @@ const adminRole =
               </p>
             </div>
 
-            <div>
-              <p className="font-semibold text-white">Latest Announcement</p>
-              <p>
-                {latestAnnouncement
-                  ? latestAnnouncement.title
-                  : "No announcements yet"}
-              </p>
-            </div>
+
           </div>
         </div>
       </div>

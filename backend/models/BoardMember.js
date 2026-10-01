@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const boardMemberSchema = new mongoose.Schema(
   {
+    displayOrder: { type: Number, default: 1000, min: 0, max: 10000 },
     name: {
       type: String,
       required: true,

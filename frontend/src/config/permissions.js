@@ -51,13 +51,3 @@ export const canManageGallery = () => {
 export const canManageBoard = () => {
   return ["president", "vice-president"].includes(getAdminRole());
 };
-
-export const canManageAnnouncements = () => {
-  return [
-    "president",
-    "vice-president",
-    "executive-secretary",
-    "social-media-manager",
-    "pr-director",
-  ].includes(getAdminRole());
-};

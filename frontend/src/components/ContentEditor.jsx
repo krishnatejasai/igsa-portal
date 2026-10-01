@@ -1,3 +1,4 @@
+import { roleSummary } from '../config/board';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from './AdminLayout';
@@ -11,7 +12,7 @@ export default function ContentEditor({ kind }) {
   const base = board ? 'board-members' : 'gallery';
   const back = `/admin/${kind}`;
   const allowed = board ? canManageBoard() : canManageGallery();
-  const [value, setValue] = useState(board ? { name: '', position: '', email: '', description: '', image: '' } : { album: '', description: '', externalUrl: '', photos: [] });
+  const [value, setValue] = useState(board ? { name: '', position: '', email: '', description: '', image: '', displayOrder: 1000 } : { album: '', description: '', externalUrl: '', photos: [] });
   const [loading, setLoading] = useState(Boolean(id));
   const [saving, setSaving] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -22,13 +23,13 @@ export default function ContentEditor({ kind }) {
     let active = true;
     contentRequest(`${base}/${id}`).then(data => {
       if (active) {
-        setValue(board ? data : { ...data, description: data.description || '', externalUrl: data.externalUrl || '', photos: data.photos?.length ? data.photos : data.image ? [data.image] : [] });
+        setValue(board ? { ...data, displayOrder: data.displayOrder ?? 1000 } : { ...data, description: data.description || '', externalUrl: data.externalUrl || '', photos: data.photos?.length ? data.photos : data.image ? [data.image] : [] });
         setLoaded(true);
       }
     }).catch(err => { if (active) setError(err.message); }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [id, base, board, allowed]);
-  const change = event => setValue(prev => ({ ...prev, [event.target.name]: event.target.value }));
+  const change = event => setValue(prev => ({ ...prev, [event.target.name]: event.target.name === "displayOrder" ? Number(event.target.value) : event.target.value }));
   async function upload(event) {
     const files = Array.from(event.target.files);
     event.target.value = '';
@@ -70,6 +71,8 @@ export default function ContentEditor({ kind }) {
           {board && <><label className="field-label">Position <span className="text-orange-700">*</span><input name="position" value={value.position} onChange={change} required maxLength={120} list="board-positions" className="field-input" placeholder="Choose or type a position" /></label>
             <datalist id="board-positions">{['President','Vice President','Treasurer','Executive Secretary','IT Director','Event Director','Event Manager','PR Director','Marketing Manager','Social Media Manager','Creative Director','Board Member'].map(role => <option key={role}>{role}</option>)}</datalist>
             <label className="field-label">Public contact email <input type="email" name="email" value={value.email} onChange={change} maxLength={254} className="field-input" placeholder="Optional" /><span className="field-help">This email will be visible to website visitors.</span></label></>}
+          {board && <label className="field-label">Display order<input type="number" name="displayOrder" min="0" max="10000" step="1" required value={value.displayOrder} onChange={change} className="field-input" /><span className="field-help">Lower numbers appear first on the board page and homepage. Use 10, 20, 30… to leave room between members.</span></label>}
+          {board && <button type="button" className="text-sm font-semibold text-blue-800 underline" onClick={() => setValue(prev => ({ ...prev, description: roleSummary(prev.position) }))}>Use a concise role description</button>}
           <label className="field-label">{board ? 'Short bio / responsibilities' : 'Description'}<textarea name="description" value={value.description} onChange={change} maxLength={2000} rows={4} className="field-input" placeholder={board ? 'How does this member support the community?' : 'Tell the story behind this event.'} /></label>
           {!board && <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5"><label className="field-label">Full album link<input type="url" name="externalUrl" value={value.externalUrl} onChange={change} maxLength={2048} pattern="https://.*" placeholder="https://drive.google.com/drive/folders/…" className="field-input bg-white" /></label><p className="field-help">Upload the full collection to Drive or Google Photos, enable viewing for anyone with the link, then paste the shared link here. Check it in a signed-out browser before publishing. A link-only album needs no photo storage on this site.</p></div>}
           <div><label className="field-label">{board ? 'Profile photo' : 'Highlight photos'}<input type="file" accept="image/jpeg,image/png,image/webp" multiple={!board} onChange={upload} className="field-input file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-blue-900" /></label><p className="field-help">JPG, PNG or WebP · up to 15 MB per file. Photos are resized automatically.{!board && ' Up to 20 highlights; the first photo is the cover.'}</p></div>

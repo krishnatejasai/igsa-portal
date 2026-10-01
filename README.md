@@ -2,13 +2,13 @@
 
 Official web portal for the **Indian Graduate Student Association (IGSA)** at the **University of Florida**.
 
-The platform helps students stay connected with IGSA through event registrations, announcements, board information, photo galleries, contact forms, and a dedicated board management dashboard.
+The platform helps students stay connected with IGSA through event registrations, board information, photo galleries, contact forms, and a dedicated board management dashboard.
 
 ---
 
 ## Live Website
 
-🌐 https://igsa-portal.vercel.app
+🌐 https://www.igsauf.us
 
 ---
 
@@ -20,7 +20,6 @@ The platform helps students stay connected with IGSA through event registrations
 - Register for events online
 - Meet the IGSA Board
 - Browse event galleries
-- View announcements and updates
 - Contact the IGSA team
 - Fully responsive design for desktop and mobile
 
@@ -33,7 +32,6 @@ The platform helps students stay connected with IGSA through event registrations
 - Open/close event registrations
 - View and export student registrations
 - QR-based attendance check-in
-- Manage announcements
 - Manage board members
 - Manage gallery albums
 - View and manage student inquiries
@@ -144,16 +142,13 @@ igsa-portal
 
 ### Board Management
 
+- Editable display order and concise role descriptions
+
 - Public board profiles
 - Board role management
 - Contact information display
 
-### Announcements
 
-- Create announcements
-- Edit announcements
-- Delete announcements
-- Public announcement feed
 
 ### Gallery Management
 

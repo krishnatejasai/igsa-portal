@@ -2,7 +2,7 @@
 
 ## Board members
 
-Sign in → **Board Members** → **Add member**. Enter name and position, optionally add a public contact email, biography and portrait, then **Save member**. Use **Edit** on a profile card to update it. Search finds names and positions. President and Vice President can manage profiles.
+Sign in → **Board Members** → **Add member**. Enter name and position, optionally add a public contact email, biography and portrait, then **Save member**. Use **Edit** on a profile card to update it. Set **Display order** to choose its position (lower numbers first; use 10, 20, 30…). The same order is used on the public board page and the homepage preview. Use **Use a concise role description** to fill in a short summary for the selected position. Search finds names and positions. President and Vice President can manage profiles.
 
 Adding a public profile does not create a login. The President manages dashboard access separately in **Admin Users**.
 
@@ -24,3 +24,7 @@ Highlights still use database storage. Link-only albums avoid storing those phot
 Deploy backend and frontend together: the updated frontend uses new detail and update endpoints. Gallery adds optional `description` and `externalUrl` fields; existing documents can still be read without them.
 
 In staging, verify: create/edit board member; authorized and unauthorized roles; compressed upload and removal; cover selection; link-only and hybrid albums; signed-out public album navigation; nonexistent album; API failure/retry; phone layout; keyboard photo viewer; create/edit validation; expired token behavior. Existing session expiry handling remains a separate improvement.
+
+## Public website
+
+The primary website is https://www.igsauf.us; https://igsauf.us redirects there. The public contact email is igsa.uf@gmail.com. The homepage includes a Pause animations control and respects system reduced-motion preferences.

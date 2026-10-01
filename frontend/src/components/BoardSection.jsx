@@ -1,104 +1,23 @@
-import { useEffect, useState } from "react";
-import API_BASE_URL from "../config/api";
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { contentRequest } from '../utils/content';
 
-function BoardSection() {
+export default function BoardSection({ preview = true }) {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [error, setError] = useState('');
+  const [retry, setRetry] = useState(0);
   useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/board-members`);
-        if (!response.ok) throw new Error("Failed to fetch board members");
-
-        const data = await response.json();
-        setMembers(data.slice(0, 8));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMembers();
-  }, []);
-
-  const getInitials = (name) =>
-    name
-      ?.split(" ")
-      .map((word) => word[0])
-      .join("")
-      .slice(0, 2);
-
-  if (loading) {
-    return (
-      <section className="py-16 md:py-24 bg-white">
-        <p className="text-center text-slate-600">Loading board members...</p>
-      </section>
-    );
-  }
-
-  return (
-    <section className="py-16 md:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-5 md:px-6">
-        <div className="text-center mb-10 md:mb-14">
-          <p className="text-orange-600 font-semibold text-sm mb-2">
-            IGSA Board
-          </p>
-
-          <h2 className="text-3xl md:text-4xl font-bold text-blue-950">
-            Meet the IGSA Team
-          </h2>
-
-          <p className="mt-3 text-sm md:text-base text-slate-600 max-w-3xl mx-auto">
-            Our board supports Indian graduate students through cultural,
-            professional, and community-driven initiatives at UF.
-          </p>
-        </div>
-
-        {members.length === 0 ? (
-          <p className="text-center text-slate-600">
-            Board members will be updated soon.
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {members.map((member) => (
-              <div
-                key={member._id}
-                className="bg-slate-50 border border-slate-200 rounded-2xl p-4 md:p-5 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 min-h-[185px] md:min-h-[245px] flex flex-col items-center"
-              >
-                {member.image ? (
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover mb-3"
-                  />
-                ) : (
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-blue-950 via-blue-800 to-orange-500 flex items-center justify-center text-white text-xl md:text-2xl font-bold mb-3">
-                    {getInitials(member.name)}
-                  </div>
-                )}
-
-                <h3 className="text-sm md:text-lg font-bold text-blue-950 leading-snug">
-                  {member.name}
-                </h3>
-
-                <p className="text-xs md:text-sm text-orange-600 font-semibold mt-1">
-                  {member.position}
-                </p>
-
-                {member.description && (
-                  <p className="hidden md:block text-xs text-slate-600 mt-3 leading-relaxed line-clamp-2">
-                    {member.description}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
-  );
+    let active = true;
+    contentRequest('board-members').then(data => { if (active) setMembers(data); }).catch(() => { if (active) setError('We couldn’t load the team. Please try again.'); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [retry]);
+  const visible = preview ? members.slice(0, 3) : members;
+  return <section className="py-16 md:py-24 bg-[#faf7f0]"><div className="max-w-7xl mx-auto px-5 md:px-8">
+    <div className="flex flex-wrap items-end justify-between gap-6 mb-10"><div><p className="text-xs tracking-[.16em] font-bold text-[#ad4921] mb-3">THE PEOPLE BEHIND IGSA</p><h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-[#172b40]">Your community. Our commitment.</h2><p className="text-slate-600 mt-4 max-w-xl">Meet the students making it all happen.</p></div>{preview && <Link to="/board" className="text-sm font-semibold text-[#172b40] border-b border-slate-300 pb-2">Meet the whole team ↗</Link>}</div>
+    {loading ? <p role="status" className="text-slate-500">Loading the team…</p> : error ? <p role="alert" className="notice notice-error">{error}<button onClick={() => { setError(''); setLoading(true); setRetry(value => value + 1); }} className="underline ml-3">Retry</button></p> : !members.length ? <p className="text-slate-600">Our team profiles will be here soon.</p> : <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{visible.map(member => <article key={member._id} className="group bg-white rounded-2xl border border-[#e3e4da] p-6 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/5">
+      <div className="flex items-center gap-5 mb-5">{member.image ? <img src={member.image} alt={member.name} loading="lazy" width="88" height="104" className="w-[88px] h-[104px] rounded-xl object-cover transition duration-500 group-hover:scale-105" /> : <div className="w-[88px] h-[104px] shrink-0 rounded-xl bg-[#e8eedf] text-[#193c40] flex items-center justify-center text-2xl font-semibold">{member.name.split(' ').map(word => word[0]).slice(0, 2).join('')}</div>}<div><p className="text-xs font-semibold text-[#a65029] mb-2">{member.position}</p><h3 className="text-xl font-semibold tracking-tight text-[#172b40] leading-snug">{member.name}</h3></div></div>
+      <p className="text-sm leading-relaxed text-slate-600">{member.description}</p>{!preview && member.email && <a href={`mailto:${member.email}`} className="inline-block text-xs text-[#48675d] mt-5 break-all hover:underline">{member.email} ↗</a>}
+    </article>)}</div>}
+  </div></section>;
 }
-
-export default BoardSection;

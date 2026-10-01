@@ -1,7 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import {
   canManageAdmins,
-  canManageAnnouncements,
   canManageBoard,
   canManageGallery,
   canUseQRCheckIn,
@@ -26,7 +25,6 @@ function AdminLayout({ children }) {
     ["QR Check-In", "/admin/check-in", canUseQRCheckIn()],
     ["Gallery", "/admin/gallery", canManageGallery()],
     ["Board Members", "/admin/board", canManageBoard()],
-    ["Announcements", "/admin/announcements", canManageAnnouncements()],
     ["Admin Users", "/admin/users", canManageAdmins()],
     ["Messages", "/admin/messages", true],
   ];

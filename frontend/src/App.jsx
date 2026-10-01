@@ -9,12 +9,9 @@ import CreateEvent from "./pages/CreateEvent";
 import AdminRegistrations from "./pages/AdminRegistrations";
 import AdminGallery from "./pages/AdminGallery";
 import AdminBoard from "./pages/AdminBoard";
-import AdminAnnouncements from "./pages/AdminAnnouncements";
 import EventRegistration from "./pages/EventRegistration";
 import EditEvent from "./pages/EditEvent";
 import UploadGallery from "./pages/UploadGallery";
-import CreateAnnouncement from "./pages/CreateAnnouncement";
-import EditAnnouncement from "./pages/EditAnnouncement";
 import CreateBoardMember from "./pages/CreateBoardMember";
 import Board from "./pages/Board";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -146,32 +143,8 @@ function App() {
     }
   />
 
-  <Route
-    path="/admin/announcements"
-    element={
-      <ProtectedRoute>
-        <AdminAnnouncements />
-      </ProtectedRoute>
-    }
-  />
 
-  <Route
-    path="/admin/announcements/create"
-    element={
-      <ProtectedRoute>
-        <CreateAnnouncement />
-      </ProtectedRoute>
-    }
-  />
 
-  <Route
-    path="/admin/announcements/edit/:id"
-    element={
-      <ProtectedRoute>
-        <EditAnnouncement />
-      </ProtectedRoute>
-    }
-  />
 
   <Route
     path="/admin/messages"

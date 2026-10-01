@@ -1,6 +1,6 @@
 # IGSA website review and maintenance plan
 
-Reviewed October 1, 2026. This is a repository review with a local browser smoke check, not a production infrastructure audit. Hosting accounts, database usage, backups, live credentials, and Drive permissions were not inspected. Changes below are local and require frontend and backend deployment together.
+Reviewed October 1, 2026. This is a repository review with a local browser smoke check, not a production infrastructure audit. Hosting accounts, database usage, backups, live credentials, and Drive permissions were not inspected. Frontend and backend changes are deployed together through the main branch. The production site is https://www.igsauf.us.
 
 ## Implemented in this refinement
 
@@ -20,7 +20,6 @@ Reviewed October 1, 2026. This is a repository review with a local browser smoke
 | --- | --- | --- |
 | P0 | `registrationController.js`: count-then-create capacity checks and duplicate lookups are separate writes; registration schema lacks event/email and event/UFID uniqueness constraints | Prevent duplicate/over-capacity registrations under simultaneous requests. Plan existing-data cleanup before adding indexes; implement atomic capacity allocation/transactions and concurrency tests. |
 | P0 | Public registration spreads `req.body` into database records | Whitelist student fields; derive event title on the server; forbid caller-supplied attendance and internal status metadata. |
-| P0 | `announcementRoutes.js` protects authentication but does not enforce editor roles | Enforce the same create/update/delete roles as the intended UI policy, with route-level authorization tests. |
 | P1 | Waitlist flow closes registration at capacity, then rejects subsequent requests before reaching waitlist logic | Separate manual closure from capacity; allow explicit waitlist joining; show waitlist-specific confirmation and notify promotions. Current success UI assumes every registration has a QR code. |
 | P1 | Registration form still renders when event loading fails; other public sections show “no data” on request failure | Add explicit failures, retry, disabled submissions and useful recovery paths across every page. |
 | P1 | `authController.js`, `server.js`: no login throttling, minimal input validation, seven-day token in browser storage | Add login abuse protection, password policy/recovery, token-expiry handling and session controls; review a cookie-based session approach. |
@@ -30,12 +29,11 @@ Reviewed October 1, 2026. This is a repository review with a local browser smoke
 | P1 | Dashboard loads six datasets together without checking every response; actions ignore some role restrictions | Partial-error handling, loading states, permission-aware actions and summary endpoints that avoid downloading unnecessary personal data/photos. |
 | P1 | No verified backup, alerting, recovery or handoff runbook in the repository | Confirm account ownership and recovery contacts; test database restore, document deployment rollback, monitor downtime and storage. |
 | P2 | `EventsSection.jsx` lists all events under “Upcoming”; dates are display strings | Store unambiguous date/time + time zone, distinguish upcoming/past events, add filters and event detail pages. |
-| P2 | Homepage/About numbers are hard-coded; footer and contact page disagree on email (`igsa@ufl.edu` vs `igsa@gmail.com`) | Confirm official email and historical statistics; centralize editable site settings so updates stay consistent. |
+| P2 | Homepage/About numbers are hard-coded; contact email has been standardized to `igsa.uf@gmail.com` | Confirm historical statistics; centralize editable site settings so updates stay consistent. |
 | P2 | Homepage logo asset is about 1 MB and all non-scanner pages share the entry bundle | Optimize logo and images, lazy-load admin routes, add explicit image dimensions and measure real mobile performance. |
 | P2 | Public pages have inconsistent footer coverage, form labeling and page headings | Apply a shared public layout and design system; test keyboard, screen-reader, 360px mobile and tablet flows. |
 | P2 | Album highlights have generated alt text; board bios disappear on mobile | Add per-photo captions/alt text and allow mobile users to expand full biographies. |
 | P2 | Board members have no term/archive/order data | Add academic-year terms, current/alumni archive, display ordering and annual rollover without deleting history. |
-| P2 | Announcements have no full archive or detail route and are truncated on the homepage | Add pinned posts, detail views, expiration dates, drafts and scheduled publication. |
 | P2 | Event deletion leaves registration handling unspecified | Prefer event cancellation/archive with retained attendance history and notification rules; define deletion policy. |
 | P2 | Metadata and content operations are mostly hard-coded | Add per-page titles/descriptions, social previews, sitemap, content ownership and a documented editorial checklist. |
 
@@ -77,7 +75,6 @@ Alumni directory with opt-in visibility, mentorship matching, merchandise, membe
 | --- | --- | --- |
 | Before publishing | Content editor | Proofread dates/venue; preview mobile; confirm photo permission; test shared album signed out; check public profile email. |
 | Before each event | Event lead + IT | Verify registration/closure, QR and manual check-in, export and capacity behavior in staging; assign check-in operators. |
-| Weekly | Secretary / PR | Review inquiries, announcements and upcoming events; remove stale information; check external links. |
 | Monthly | IT director | Check hosting/database/media usage, failed requests, dependency updates, backups and admin roster. |
 | Each semester | President + IT | Review access, privacy/retention, content owners, resource links and service ownership. |
 | Annual handoff | Outgoing + incoming leads | Confirm recovery access, rotate shared credentials through normal account workflows, test deployment and restore, archive board term and transfer runbook. |
@@ -91,3 +88,7 @@ Alumni directory with opt-in visibility, mentorship matching, merchandise, membe
 - Local browser: public navigation and gallery error state rendered; the configured API could not be loaded during the smoke check. Database-backed creation/editing and real uploads still require a staging check with valid backend configuration and authorized credentials.
 - No production writes, deployments, Drive uploads or sharing-permission changes were performed. No database storage quota was measured.
 - Existing large albums/photos remain unchanged. Newly edited legacy content may exceed the new validation limits; move its full collection to external storage and retain selected highlights before saving.
+
+## Homepage refinement
+
+The homepage now uses a cream, orange, and deep-blue design with an animated SVG rangoli, pointer-responsive artwork, floating cards, a moving culture ribbon, scroll reveals, and a reading-progress line. Continuous motion can be paused, and reduced-motion preferences are honored. Board profile ordering and short-description suggestions are available in the editor.

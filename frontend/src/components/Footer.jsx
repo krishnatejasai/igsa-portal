@@ -41,7 +41,7 @@ function Footer() {
             </h4>
 
             <div className="space-y-2 text-slate-400">
-              <p>igsa@ufl.edu</p>
+              <a href="mailto:igsa.uf@gmail.com" className="hover:text-white">igsa.uf@gmail.com</a>
               <p>@igsa.uf</p>
             </div>
           </div>
