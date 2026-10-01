@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { contentRequest } from "../utils/content";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
 import { canManageAdmins } from "../config/permissions";
@@ -18,6 +19,18 @@ function AdminUsers() {
 
   const allowAdminManagement = canManageAdmins();
 
+  const token = localStorage.getItem("igsaAdminToken");
+
+
+  const fetchAdmins = useCallback(() => contentRequest("auth/admins")
+    .then(setAdmins)
+    .catch(error => { console.error(error); alert("Unable to load admin users."); })
+    .finally(() => setLoading(false)), []);
+
+  useEffect(() => {
+    if (allowAdminManagement) fetchAdmins();
+  }, [fetchAdmins, allowAdminManagement]);
+
   if (!allowAdminManagement) {
     return (
       <AdminLayout>
@@ -34,34 +47,7 @@ function AdminUsers() {
     );
   }
 
-  const token = localStorage.getItem("igsaAdminToken");
 
-
-  const fetchAdmins = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/admins`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch admins");
-      }
-
-      const data = await response.json();
-      setAdmins(data);
-    } catch (error) {
-      console.error(error);
-      alert("Unable to load admin users.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAdmins();
-  }, []);
 
   const handleChange = (e) => {
     setForm({

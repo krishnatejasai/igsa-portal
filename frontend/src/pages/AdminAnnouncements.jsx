@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { contentRequest } from "../utils/content";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
@@ -9,27 +10,14 @@ function AdminAnnouncements() {
   const [loading, setLoading] = useState(true);
   const allowAnnouncementManagement = canManageAnnouncements();
 
-  const fetchAnnouncements = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/announcements`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch announcements");
-      }
-
-      const data = await response.json();
-      setAnnouncements(data);
-    } catch (error) {
-      console.error(error);
-      alert("Unable to load announcements.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchAnnouncements = useCallback(() => contentRequest("announcements")
+    .then(setAnnouncements)
+    .catch(error => { console.error(error); alert("Unable to load announcements."); })
+    .finally(() => setLoading(false)), []);
 
   useEffect(() => {
     fetchAnnouncements();
-  }, []);
+  }, [fetchAnnouncements]);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(

@@ -7,6 +7,8 @@ const gallerySchema = new mongoose.Schema(
       required: true,
     },
 
+    description: { type: String, default: "" },
+    externalUrl: { type: String, default: "" },
     photos: {
       type: [String],
       required: true,

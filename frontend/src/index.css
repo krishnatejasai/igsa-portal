@@ -10,3 +10,15 @@ body {
   background: #f8fafc;
   color: #0f172a;
 }
+@layer components {
+  .field-label { @apply block text-sm font-semibold text-slate-700; }
+  .field-input { @apply block w-full mt-2 border border-slate-300 rounded-xl p-3 text-base font-normal text-slate-900 focus:border-blue-700 focus:ring-2 focus:ring-blue-100 outline-none; }
+  .field-help { @apply block text-xs font-normal text-slate-500 mt-2 leading-relaxed; }
+  .notice { @apply rounded-xl border border-blue-200 bg-blue-50 p-4 text-blue-900; }
+  .notice-error { @apply border-red-200 bg-red-50 text-red-800; }
+}
+:focus-visible { outline: 3px solid #c2410c; outline-offset: 3px; }
+button:not(:disabled), a { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}

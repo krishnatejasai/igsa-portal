@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   canManageAdmins,
   canManageAnnouncements,
@@ -35,32 +35,32 @@ function AdminLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-100 overflow-x-hidden">
-      <aside className="hidden lg:block w-72 bg-blue-950 text-white min-h-screen p-6 fixed left-0 top-0">
+      <aside className="hidden lg:flex w-72 bg-blue-950 text-white h-screen overflow-y-auto p-6 fixed left-0 top-0 flex-col">
         <h1 className="text-2xl font-bold">IGSA Portal</h1>
         <p className="text-sm text-blue-200 mt-1">Board Dashboard</p>
 
         <nav className="mt-10 space-y-3">
           {visibleLinks.map(([label, path]) => (
-            <Link
+            <NavLink
               key={label}
               to={path}
-              className="block px-4 py-3 rounded-xl hover:bg-orange-500 transition font-semibold"
+              className={({ isActive }) => `block px-4 py-3 rounded-xl transition font-semibold ${isActive ? "bg-white text-blue-950" : "hover:bg-blue-900 text-blue-100"}`}
             >
               {label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 
         <button
           onClick={logout}
-          className="absolute bottom-20 left-6 right-6 bg-orange-500 text-white py-3 rounded-xl font-bold hover:bg-orange-600"
+          className="mt-8 shrink-0 bg-orange-500 text-white py-3 rounded-xl font-bold hover:bg-orange-600"
         >
           Logout
         </button>
 
         <Link
           to="/"
-          className="absolute bottom-6 left-6 right-6 text-center bg-white text-blue-950 py-3 rounded-xl font-bold hover:bg-orange-500 hover:text-white"
+          className="mt-3 shrink-0 text-center bg-white text-blue-950 py-3 rounded-xl font-bold hover:bg-orange-500 hover:text-white"
         >
           Back to Website
         </Link>
@@ -72,13 +72,13 @@ function AdminLayout({ children }) {
 
         <div className="mt-4 overflow-x-auto flex gap-3 pb-2">
           {visibleLinks.map(([label, path]) => (
-            <Link
+            <NavLink
               key={label}
               to={path}
-              className="whitespace-nowrap bg-blue-900 px-4 py-2 rounded-xl text-sm font-semibold"
+              className={({ isActive }) => `whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold ${isActive ? "bg-white text-blue-950" : "bg-blue-900"}`}
             >
               {label}
-            </Link>
+            </NavLink>
           ))}
         </div>
 

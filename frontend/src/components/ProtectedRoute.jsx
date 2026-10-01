@@ -7,7 +7,6 @@ function ProtectedRoute({ children }) {
   );
 
   if (!token || loggedIn !== "true") {
-    localStorage.clear();
     return <Navigate to="/admin/login" replace />;
   }
 

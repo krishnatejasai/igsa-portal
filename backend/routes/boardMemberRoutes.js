@@ -1,17 +1,10 @@
-const express = require("express");
-const { protect } = require("../middleware/authMiddleware");
-
-const router = express.Router();
-
-const {
-  createBoardMember,
-  getBoardMembers,
-  deleteBoardMember,
-} = require("../controllers/boardMemberController");
-
-router.get("/", getBoardMembers);
-
-router.post("/", protect, createBoardMember);
-router.delete("/:id", protect, deleteBoardMember);
-
+const router = require("express").Router();
+const { protect, requireRole } = require("../middleware/authMiddleware");
+const controller = require("../controllers/boardMemberController");
+const manage = requireRole("president", "vice-president");
+router.get("/", controller.getBoardMembers);
+router.get("/:id", controller.getById);
+router.post("/", protect, manage, controller.createBoardMember);
+router.put("/:id", protect, manage, controller.updateBoardMember);
+router.delete("/:id", protect, manage, controller.deleteBoardMember);
 module.exports = router;

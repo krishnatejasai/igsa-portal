@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { contentRequest } from "../utils/content";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
 import { canDeleteContent } from "../config/permissions";
@@ -11,31 +12,14 @@ function AdminRegistrations() {
 
   const allowDelete = canDeleteContent();
 
-  const fetchRegistrations = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/registrations`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch registrations");
-      }
-
-      const data = await response.json();
-      setRegistrations(data);
-    } catch (error) {
-      console.error(error);
-      alert("Unable to load registrations.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchRegistrations = useCallback(() => contentRequest("registrations")
+    .then(setRegistrations)
+    .catch(error => { console.error(error); alert("Unable to load registrations."); })
+    .finally(() => setLoading(false)), []);
 
   useEffect(() => {
     fetchRegistrations();
-  }, []);
+  }, [fetchRegistrations]);
 
   const eventOptions = [
     "all",

@@ -15,7 +15,7 @@ function Home() {
 <EventsSection />
 <AnnouncementSection />
 <BoardSection />
-<GallerySection />
+<GallerySection preview />
 <ContactSection />
 <Footer />
 </>

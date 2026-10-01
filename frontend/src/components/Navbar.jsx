@@ -49,6 +49,7 @@ function Navbar() {
           onClick={() => setOpen(!open)}
           className="md:hidden text-blue-950 text-3xl font-bold"
           aria-label="Toggle menu"
+          aria-expanded={open}
         >
           {open ? "×" : "☰"}
         </button>

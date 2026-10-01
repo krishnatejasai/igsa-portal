@@ -1,16 +1,10 @@
-const express = require("express");
-const { protect } = require("../middleware/authMiddleware");
-
-const router = express.Router();
-
-const {
-  createAlbum,
-  getAlbums,
-  deleteAlbum,
-} = require("../controllers/galleryController");
-
-router.get("/", getAlbums);
-router.post("/", protect, createAlbum);
-router.delete("/:id", protect, deleteAlbum);
-
+const router = require("express").Router();
+const { protect, requireRole } = require("../middleware/authMiddleware");
+const controller = require("../controllers/galleryController");
+const manage = requireRole("president", "vice-president", "social-media-manager", "creative-director", "it-director");
+router.get("/", controller.getAlbums);
+router.get("/:id", controller.getById);
+router.post("/", protect, manage, controller.createAlbum);
+router.put("/:id", protect, manage, controller.updateAlbum);
+router.delete("/:id", protect, manage, controller.deleteAlbum);
 module.exports = router;

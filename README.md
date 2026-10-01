@@ -257,6 +257,12 @@ Add screenshot here
 
 ---
 
+## Website maintenance and refinement
+
+- [Website review and prioritized roadmap](docs/WEBSITE_REVIEW.md)
+- [Board and gallery editing guide](docs/CONTENT_GUIDE.md)
+- Validation tests: `node --test backend/tests/content.test.js`
+
 ## Future Enhancements
 
 - Email notifications

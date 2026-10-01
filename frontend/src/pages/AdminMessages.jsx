@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { contentRequest } from "../utils/content";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
 import { canDeleteMessages } from "../config/permissions";
@@ -9,31 +10,14 @@ function AdminMessages() {
   const [loading, setLoading] = useState(true);
   const allowDeleteMessages = canDeleteMessages();
 
-  const fetchMessages = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/messages`, {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("igsaAdminToken")}`,
-  },
-});
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch messages");
-      }
-
-      const data = await response.json();
-      setMessages(data);
-    } catch (error) {
-      console.error(error);
-      alert("Unable to load messages.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchMessages = useCallback(() => contentRequest("messages")
+    .then(setMessages)
+    .catch(error => { console.error(error); alert("Unable to load messages."); })
+    .finally(() => setLoading(false)), []);
 
   useEffect(() => {
     fetchMessages();
-  }, []);
+  }, [fetchMessages]);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(

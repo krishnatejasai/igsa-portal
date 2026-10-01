@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import AdminLogin from "./pages/AdminLogin";
@@ -24,23 +25,15 @@ import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import GalleryAlbum from "./pages/GalleryAlbum";
 import AdminUsers from "./pages/AdminUsers";
-import AdminCheckIn from "./pages/AdminCheckIn";
-
-function Placeholder({ title }) {
-  return (
-    <div className="min-h-screen pt-32 px-6 bg-slate-50">
-      <h1 className="text-4xl font-bold text-blue-950">
-        {title}
-      </h1>
-    </div>
-  );
-}
+const AdminCheckIn = lazy(() => import("./pages/AdminCheckIn"));
 
 function App() {
+  const { pathname } = useLocation();
   return (
     <>
-      {!window.location.pathname.startsWith("/admin") && <Navbar />}
+      {!pathname.startsWith("/admin") && <Navbar />}
 
+      <Suspense fallback={<main className="p-10 pt-32" role="status">Loading page…</main>}>
       <Routes>
   <Route path="/" element={<Home />} />
   <Route path="/about" element={<About />} />
@@ -188,7 +181,11 @@ function App() {
       </ProtectedRoute>
     }
   />
+  <Route path="/admin/board/edit/:id" element={<ProtectedRoute><CreateBoardMember /></ProtectedRoute>} />
+  <Route path="/admin/gallery/edit/:id" element={<ProtectedRoute><UploadGallery /></ProtectedRoute>} />
+  <Route path="*" element={<main className="min-h-screen pt-40 px-6 text-center"><h1 className="text-4xl font-bold text-blue-950">Page not found</h1><p className="my-5 text-slate-600">This page may have moved or the link is incorrect.</p><Link to="/" className="text-blue-800 underline">Return to IGSA home</Link></main>} />
 </Routes>
+      </Suspense>
     </>
   );
 }

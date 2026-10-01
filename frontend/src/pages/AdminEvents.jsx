@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { contentRequest } from "../utils/content";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import API_BASE_URL from "../config/api";
@@ -10,27 +11,14 @@ function AdminEvents() {
   const [loading, setLoading] = useState(true);
   const allowEventManagement = canManageEvents();
 
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/events`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch events");
-      }
-
-      const data = await response.json();
-      setEvents(data);
-    } catch (error) {
-      console.error(error);
-      alert("Unable to load events from server.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchEvents = useCallback(() => contentRequest("events")
+    .then(setEvents)
+    .catch(error => { console.error(error); alert("Unable to load events."); })
+    .finally(() => setLoading(false)), []);
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
