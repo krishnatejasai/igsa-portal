@@ -26,7 +26,6 @@ function AdminLayout({ children }) {
     ["Gallery", "/admin/gallery", canManageGallery()],
     ["Board Members", "/admin/board", canManageBoard()],
     ["Admin Users", "/admin/users", canManageAdmins()],
-    ["Messages", "/admin/messages", true],
   ];
 
   const visibleLinks = links.filter((link) => link[2]);

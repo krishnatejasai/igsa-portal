@@ -15,7 +15,6 @@ import UploadGallery from "./pages/UploadGallery";
 import CreateBoardMember from "./pages/CreateBoardMember";
 import Board from "./pages/Board";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminMessages from "./pages/AdminMessages";
 import About from "./pages/About";
 import Events from "./pages/Events";
 import Gallery from "./pages/Gallery";
@@ -143,17 +142,6 @@ function App() {
     }
   />
 
-
-
-
-  <Route
-    path="/admin/messages"
-    element={
-      <ProtectedRoute>
-        <AdminMessages />
-      </ProtectedRoute>
-    }
-  />
   <Route path="/admin/board/edit/:id" element={<ProtectedRoute><CreateBoardMember /></ProtectedRoute>} />
   <Route path="/admin/gallery/edit/:id" element={<ProtectedRoute><UploadGallery /></ProtectedRoute>} />
   <Route path="*" element={<main className="min-h-screen pt-40 px-6 text-center"><h1 className="text-4xl font-bold text-blue-950">Page not found</h1><p className="my-5 text-slate-600">This page may have moved or the link is incorrect.</p><Link to="/" className="text-blue-800 underline">Return to IGSA home</Link></main>} />

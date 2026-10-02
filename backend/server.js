@@ -19,14 +19,12 @@ app.get("/", (req, res) => {
 const eventRoutes = require("./routes/eventRoutes");
 const registrationRoutes = require("./routes/registrationRoutes");
 const boardMemberRoutes = require("./routes/boardMemberRoutes");
-const messageRoutes = require("./routes/messageRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
 const authRoutes = require("./routes/authRoutes");
 
 app.use("/api/events", eventRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/board-members", boardMemberRoutes);
-app.use("/api/messages", messageRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/auth", authRoutes);
 

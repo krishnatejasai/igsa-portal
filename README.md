@@ -156,10 +156,10 @@ igsa-portal
 - Upload event photos
 - Public gallery display
 
-### Contact System
+### Contact Links
 
-- Student inquiry form
-- Dashboard message management
+- Email: igsa.uf@gmail.com
+- Instagram and WhatsApp community links
 
 ---
 

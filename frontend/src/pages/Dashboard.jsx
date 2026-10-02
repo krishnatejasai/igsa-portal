@@ -17,7 +17,6 @@ const adminRole =
     [0, "Attendance Rate"],
     [0, "Board Members"],
     [0, "Gallery Albums"],
-    [0, "Messages"],
   ]);
 
   const [latestRegistration, setLatestRegistration] = useState(null);
@@ -34,7 +33,6 @@ const adminRole =
           registrationsRes,
           boardRes,
           galleryRes,
-          messagesRes,
         ] = await Promise.all([
           fetch(`${API_BASE_URL}/api/events`),
 
@@ -46,21 +44,14 @@ const adminRole =
 
           fetch(`${API_BASE_URL}/api/board-members`),
 
-
           fetch(`${API_BASE_URL}/api/gallery`),
 
-          fetch(`${API_BASE_URL}/api/messages`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
         ]);
 
         const events = await eventsRes.json();
         const registrations = await registrationsRes.json();
         const boardMembers = await boardRes.json();
         const gallery = await galleryRes.json();
-        const messages = await messagesRes.json();
 
         const checkedInCount = registrations.filter(
           (student) => student.checkedIn
@@ -78,7 +69,6 @@ const adminRole =
           [`${attendanceRate}%`, "Attendance Rate"],
           [boardMembers.length, "Board Members"],
           [gallery.length, "Gallery Albums"],
-          [messages.length, "Messages"],
         ]);
 
         setLatestEvent(events[0] || null);
@@ -196,7 +186,6 @@ const adminRole =
               </p>
             </Link>
 
-
           </div>
         </div>
 
@@ -217,7 +206,6 @@ const adminRole =
                   : "No registrations yet"}
               </p>
             </div>
-
 
           </div>
         </div>

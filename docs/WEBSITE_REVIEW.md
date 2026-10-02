@@ -23,10 +23,10 @@ Reviewed October 1, 2026. This is a repository review with a local browser smoke
 | P1 | Waitlist flow closes registration at capacity, then rejects subsequent requests before reaching waitlist logic | Separate manual closure from capacity; allow explicit waitlist joining; show waitlist-specific confirmation and notify promotions. Current success UI assumes every registration has a QR code. |
 | P1 | Registration form still renders when event loading fails; other public sections show “no data” on request failure | Add explicit failures, retry, disabled submissions and useful recovery paths across every page. |
 | P1 | `authController.js`, `server.js`: no login throttling, minimal input validation, seven-day token in browser storage | Add login abuse protection, password policy/recovery, token-expiry handling and session controls; review a cookie-based session approach. |
-| P1 | Contact form has no spam control; registrations collect UFID, phone and email | Minimize fields, document purpose/retention, add server validation and abuse controls, restrict personal-data access to operational roles. |
+| P1 | Registrations collect UFID, phone and email | Minimize fields, document purpose/retention, add server validation and abuse controls, restrict personal-data access to operational roles. |
 | P1 | `AdminRegistrations.jsx` CSV export does not escape embedded quotes or protect spreadsheet formula interpretation | Correct escaping and formula handling, then test names and other input containing quotes, commas and formula prefixes. |
 | P1 | Gallery API still returns every embedded photo in collection responses | Add cover/metadata-only listing, pagination and separate album-detail retrieval; move image binaries into object/media storage when needed. Compression is an interim improvement, not unlimited storage. |
-| P1 | Dashboard loads six datasets together without checking every response; actions ignore some role restrictions | Partial-error handling, loading states, permission-aware actions and summary endpoints that avoid downloading unnecessary personal data/photos. |
+| P1 | Dashboard loads four datasets together without checking every response; actions ignore some role restrictions | Partial-error handling, loading states, permission-aware actions and summary endpoints that avoid downloading unnecessary personal data/photos. |
 | P1 | No verified backup, alerting, recovery or handoff runbook in the repository | Confirm account ownership and recovery contacts; test database restore, document deployment rollback, monitor downtime and storage. |
 | P2 | `EventsSection.jsx` lists all events under “Upcoming”; dates are display strings | Store unambiguous date/time + time zone, distinguish upcoming/past events, add filters and event detail pages. |
 | P2 | Homepage/About numbers are hard-coded; contact email has been standardized to `igsa.uf@gmail.com` | Confirm historical statistics; centralize editable site settings so updates stay consistent. |
@@ -58,8 +58,7 @@ P0 = resolve before a high-demand registration opening or broader admin rollout.
 1. Invitation-based admin onboarding, password reset, role editing and term-end access removal.
 2. Draft → preview → publish workflow, scheduled posts and change history.
 3. Board term rollover, archived members and bulk profile import with a review step.
-4. Dashboard task list for unanswered inquiries, upcoming event deadlines and stale content.
-5. Contact inbox statuses, assignees and internal notes.
+4. Dashboard task list for upcoming event deadlines and stale content.
 6. Event budgets/expense summaries and sponsor management only after access and retention requirements are defined.
 7. Audit trail for content edits, admin role changes and exports; soft deletion/restore.
 8. Media library with captions, cover cropping, explicit reuse permissions and storage metrics.
@@ -91,4 +90,4 @@ Alumni directory with opt-in visibility, mentorship matching, merchandise, membe
 
 ## Homepage refinement
 
-The homepage now uses a cream, orange, and deep-blue design with an animated SVG rangoli, pointer-responsive artwork, floating cards, a moving culture ribbon, scroll reveals, and a reading-progress line. Continuous motion can be paused, and reduced-motion preferences are honored. Board profile ordering and short-description suggestions are available in the editor.
+The homepage now uses a bright orange, green, blue, and white design with an animated SVG rangoli, pointer-responsive artwork, a moving culture ribbon, scroll reveals, and a reading-progress line. Continuous motion can be paused, and reduced-motion preferences are honored. Board profile ordering and short-description suggestions are available in the editor. The homepage shows the first four members. Contact links replace the removed messaging feature.

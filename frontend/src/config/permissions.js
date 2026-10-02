@@ -2,10 +2,6 @@ export const getAdminRole = () => {
   return localStorage.getItem("igsaAdminRole") || "board-member";
 };
 
-export const canDeleteMessages = () => {
-  return getAdminRole() === "president";
-};
-
 export const isPresident = () => {
   return getAdminRole() === "president";
 };
