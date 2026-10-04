@@ -68,3 +68,49 @@ test('board list sorts numeric display order while preserving legacy tie order',
   const res = response(); await board.getBoardMembers({}, res);
   assert.deepEqual(res.body.map(item => item.name), ['First', 'Second', 'Legacy first', 'Legacy next']);
 });
+
+test('event counts are batched and events without registrations get zero', async t => {
+  const Event = require('../models/Event');
+  const Registration = require('../models/Registration');
+  const { getEvents } = require('../controllers/eventController');
+  const events = ['one', 'two'].map(_id => ({ _id, toObject: () => ({ _id }) }));
+  t.mock.method(Event, 'find', () => ({ sort: async () => events }));
+  const aggregate = t.mock.method(Registration, 'aggregate', async pipeline => {
+    assert.deepEqual(pipeline[0].$match.eventId.$in, ['one', 'two']);
+    return [{ _id: 'two', count: 3 }];
+  });
+  const res = response();
+  await getEvents({}, res);
+  assert.deepEqual(res.body, [{ _id: 'one', registrationCount: 0 }, { _id: 'two', registrationCount: 3 }]);
+  assert.equal(aggregate.mock.callCount(), 1);
+});
+
+test('empty event list skips registration query', async t => {
+  const Event = require('../models/Event');
+  const Registration = require('../models/Registration');
+  t.mock.method(Event, 'find', () => ({ sort: async () => [] }));
+  t.mock.method(Registration, 'aggregate', () => assert.fail('no query needed'));
+  const res = response();
+  await require('../controllers/eventController').getEvents({}, res);
+  assert.deepEqual(res.body, []);
+});
+
+test('gallery summary requests only a cover and total count', async t => {
+  const summary = [{ album: 'Event', photos: ['cover'], photoCount: 5 }];
+  t.mock.method(Gallery, 'aggregate', async pipeline => {
+    assert.deepEqual(pipeline[1].$project.photos, { $slice: [{ $ifNull: ['$photos', []] }, 1] });
+    assert.deepEqual(pipeline[1].$project.photoCount, { $size: { $ifNull: ['$photos', []] } });
+    return summary;
+  });
+  const res = response();
+  await gallery.getAlbums({ query: { summary: '1' } }, res);
+  assert.deepEqual(res.body, summary);
+});
+
+test('gallery editor list continues returning complete albums', async t => {
+  const albums = [{ album: 'Event', photos: ['cover', 'second'] }];
+  t.mock.method(Gallery, 'find', () => ({ sort: async () => albums }));
+  const res = response();
+  await gallery.getAlbums({}, res);
+  assert.deepEqual(res.body, albums);
+});

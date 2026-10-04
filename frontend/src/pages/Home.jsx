@@ -39,10 +39,10 @@ export default function Home() {
   return <div ref={root} className={`igsa-home ${paused ? 'motion-paused' : ''}`}>
     <div ref={progress} className="reading-progress" aria-hidden="true" />
     <Hero />
-    <div className="culture-ribbon"><p className="sr-only">Culture. Connection. Community. Go Gators.</p><div className="ribbon-track" aria-hidden="true">{[0, 1].map(copy => <div className="ribbon-group" key={copy}><span>CULTURE</span><i>✳</i><span>CONNECTION</span><i>✳</i><span>COMMUNITY</span><i>✳</i><span>GO GATORS</span><i>✳</i></div>)}</div></div>
+    <div className="culture-ribbon"><p className="sr-only">Culture. Connection. Community. Go Gators.</p><div className="ribbon-track" aria-hidden="true">{[0, 1].map(copy => <div className="ribbon-group" key={copy}><span>CULTURE</span><i>✳︎</i><span>CONNECTION</span><i>✳︎</i><span>COMMUNITY</span><i>✳︎</i><span>GO GATORS</span><i>✳︎</i></div>)}</div></div>
     <AboutSection />
     <div className="home-events" data-reveal><EventsSection /></div>
-    <section className="belong-banner"><div className="home-shell" data-reveal><span className="banner-flower" aria-hidden="true">✳</span><p>Different journeys.<br /><em>One community.</em></p><a href="mailto:igsa.uf@gmail.com" className="home-button light">Say hello <span>↗</span></a></div></section>
+    <section className="belong-banner"><div className="home-shell" data-reveal><span className="banner-flower" aria-hidden="true">✳︎</span><p>Different journeys.<br /><em>One community.</em></p><a href="mailto:igsa.uf@gmail.com" className="home-button light">Say hello <span>↗</span></a></div></section>
     <div className="home-board" data-reveal><BoardSection /></div>
     <div className="home-gallery" data-reveal><GallerySection preview /></div>
     <div className="home-contact" data-reveal><ContactSection /></div>

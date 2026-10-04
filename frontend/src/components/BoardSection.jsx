@@ -9,7 +9,7 @@ export default function BoardSection({ preview = true }) {
   const [retry, setRetry] = useState(0);
   useEffect(() => {
     let active = true;
-    contentRequest('board-members').then(data => { if (active) setMembers(data); }).catch(() => { if (active) setError('We couldn’t load the team. Please try again.'); }).finally(() => { if (active) setLoading(false); });
+    contentRequest('board-members', { public: true }).then(data => { if (active) setMembers(data); }).catch(() => { if (active) setError('We couldn’t load the team. Please try again.'); }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [retry]);
   const visible = preview ? members.slice(0, 4) : members;

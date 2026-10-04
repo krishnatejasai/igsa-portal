@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import API_BASE_URL from "../config/api";
 
 function AdminLogin() {
@@ -6,7 +7,13 @@ function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [slow, setSlow] = useState(false);
+  const submitting = useRef(false);
+  const navigate = useNavigate();
+
   const handleLogin = async () => {
+    if (submitting.current) return;
     setError("");
 
     if (!email.trim() || !password.trim()) {
@@ -14,9 +21,14 @@ function AdminLogin() {
       return;
     }
 
+    submitting.current = true;
+    setLoading(true);
+    setSlow(false);
+    const slowTimer = setTimeout(() => setSlow(true), 8000);
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
+        signal: AbortSignal.timeout(75000),
         headers: {
           "Content-Type": "application/json",
         },
@@ -39,10 +51,15 @@ function AdminLogin() {
       localStorage.setItem("igsaAdminRole", data.admin?.role || "board-member");
       localStorage.setItem("igsaAdminLoggedIn", "true");
 
-      window.location.replace("/admin/dashboard");
+      navigate("/admin/dashboard", { replace: true });
     } catch (error) {
       console.error(error);
-      setError("Unable to login. Please try again.");
+      setError(error.name === "TimeoutError" ? "The server is taking too long. Please try signing in again." : "Unable to login. Please try again.");
+    } finally {
+      clearTimeout(slowTimer);
+      submitting.current = false;
+      setLoading(false);
+      setSlow(false);
     }
   };
 
@@ -102,10 +119,13 @@ function AdminLogin() {
 
           <button
             type="submit"
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition"
+            disabled={loading}
+            aria-busy={loading}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition disabled:opacity-60 disabled:cursor-wait"
           >
-            Login
+            {loading ? "Signing in…" : "Login"}
           </button>
+          {loading && <p role="status" className="text-sm text-slate-600 text-center">{slow ? "The server may be waking up. Please keep this page open while we sign you in." : "Checking your credentials…"}</p>}
         </form>
 
         <p className="text-center text-xs text-slate-500 mt-6">

@@ -7,7 +7,19 @@ const createAlbum = async (req, res) => {
   try { res.status(201).json(await Model.create(input)); } catch (error) { fail(res, error); }
 };
 const getAlbums = async (req, res) => {
-  try { res.json(await Model.find().sort({ createdAt: -1 })); } catch (error) { fail(res, error); }
+  try {
+    if (req.query?.summary === "1") {
+      return res.json(await Model.aggregate([
+        { $sort: { createdAt: -1 } },
+        { $project: {
+          album: 1, description: 1, externalUrl: 1, image: 1, createdAt: 1,
+          photos: { $slice: [{ $ifNull: ["$photos", []] }, 1] },
+          photoCount: { $size: { $ifNull: ["$photos", []] } },
+        } },
+      ]));
+    }
+    res.json(await Model.find().sort({ createdAt: -1 }));
+  } catch (error) { fail(res, error); }
 };
 const getById = async (req, res) => {
   try { const item = await Model.findById(req.params.id); if (!item) return res.status(404).json({ message: "Not found" }); res.json(item); } catch (error) { fail(res, error); }

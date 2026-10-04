@@ -41,7 +41,7 @@
 .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .pillar-card { display: block; padding: 30px; border: 1px solid #003b800c; border-radius: 15px; transition: transform .4s, box-shadow .4s; position: relative; overflow: hidden; }
 .pillar-card:hover { transform: translateY(-9px); box-shadow: 0 20px 40px #003b8010; }
-.pillar-card.peach { background: #f5ce98; border-top: 3px solid #ff9933; }.pillar-card.sage { background: #e9dfcc; border-top: 3px solid #c5b797; }.pillar-card.lavender { background: #cee0bd; border-top: 3px solid #138808; }
+.pillar-card.peach { background: #ff9933; border-top: 3px solid #ff9933; }.pillar-card.sage { background: #ffffff; border-top: 3px solid #d5d5d5; }.pillar-card.lavender { background: #138808; border-top: 3px solid #138808; }
 .pillar-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #65706c; margin-bottom: 35px; }
 .pillar-icon { font-size: 48px; color: #003b80; transition: transform .65s; }.sage .pillar-icon { color: #7a7668; }.lavender .pillar-icon { color: #138808; }
 .pillar-card:hover .pillar-icon { transform: rotate(35deg) scale(1.15); }
@@ -50,10 +50,10 @@
 .home-events > section { background: #fff8ed; border-top: 1px solid #e8e5dc; }
 .igsa-home .home-events h2, .igsa-home .home-board h2, .igsa-home .home-gallery h2 { font-weight: 600; letter-spacing: -.045em; }
 .home-events a { transition: transform .25s, box-shadow .25s; }.home-events a:hover { transform: translateY(-3px); box-shadow: 0 6px 20px #b46a3325; }
-.belong-banner { background: #f3cf99; color: #003b80; padding: 58px 0; position: relative; overflow: hidden; }
+.belong-banner { background: #ff9933; color: #003b80; padding: 58px 0; position: relative; overflow: hidden; }
 .belong-banner .home-shell { display: flex; align-items: center; gap: 40px; }.belong-banner p { font-size: clamp(29px, 4vw, 51px); line-height: 1.1; letter-spacing: -.035em; }.belong-banner em { color: #176b2d; font-family: Georgia, serif; font-weight: 400; }.belong-banner .home-button { margin-left: auto; }
 .banner-flower { font-size: 95px; color: #e47916; animation: spin 40s linear infinite; }.home-button.light { background: #c95100; color: #ffffff; }
-.home-board > section { background: #fffdf9; }.igsa-home .home-gallery > section { background: #e9dfcc; }.home-contact > section { background: #fffdf9; }
+.home-board > section { background: #fffdf9; }.igsa-home .home-gallery > section { background: #138808; color: #ffffff; }.home-contact > section { background: #fffdf9; }
 
 .reading-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: #ff9933; z-index: 70; transform: scaleX(0); transform-origin: left; pointer-events: none; }
 .motion-toggle { position: fixed; right: 18px; bottom: 16px; z-index: 45; padding: 9px 13px; border-radius: 30px; background: #fffdf9ed; border: 1px solid #c8cdc3; font-size: 10px; color: #003b80; box-shadow: 0 2px 12px #003b8012; }
@@ -106,3 +106,13 @@
   .board-preview-card h3 { font-size: 18px; }
   .hero-actions { gap: 18px; }
 }
+
+/* Indian tricolor preview: saffron, white, and India green. */
+.pillar-card.peach .pillar-icon { color: #003b80; }
+.pillar-card.peach p, .pillar-card.peach .pillar-top { color: #24394a; }
+.pillar-card.lavender, .pillar-card.lavender p, .pillar-card.lavender .pillar-top, .pillar-card.lavender .pillar-icon { color: #ffffff; }
+.pillar-card.lavender .pillar-link { border-color: #ffffff60; }
+.belong-banner .banner-flower { color: #ffffff; }
+.belong-banner em { color: #174b1f; }
+.belong-banner .home-button.light { background: #003b80; color: #ffffff; }
+.home-gallery > section > div > div:first-child :is(h2, p, a) { color: #ffffff; }

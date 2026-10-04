@@ -1,31 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import API_BASE_URL from "../config/api";
+import { contentRequest } from "../utils/content";
 
 function EventsSection() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/events`);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch events");
-        }
-
-        const data = await response.json();
-        setEvents(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
+    let active = true;
+    contentRequest('events', { public: true })
+      .then(data => { if (active) setEvents(data); })
+      .catch(() => { if (active) setError("We couldn’t load events. Please try again."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [retry]);
 
   return (
     <section className="py-16 md:py-28 bg-slate-100">
@@ -45,7 +35,9 @@ function EventsSection() {
         </div>
 
         {loading ? (
-          <p className="text-center text-slate-600">Loading events...</p>
+          <p role="status" className="text-center text-slate-600">Loading events...</p>
+        ) : error ? (
+          <p role="alert" className="text-center text-slate-600">{error} <button className="underline" onClick={() => { setError(""); setLoading(true); setRetry(value => value + 1); }}>Retry</button></p>
         ) : events.length === 0 ? (
           <p className="text-center text-slate-600">
             No upcoming events yet.

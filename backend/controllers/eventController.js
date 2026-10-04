@@ -16,18 +16,15 @@ const getEvents = async (req, res) => {
       createdAt: -1,
     });
 
-    const eventsWithCounts = await Promise.all(
-      events.map(async (event) => {
-        const registrationCount = await Registration.countDocuments({
-          eventId: event._id,
-        });
-
-        return {
-          ...event.toObject(),
-          registrationCount,
-        };
-      })
-    );
+    const counts = events.length ? await Registration.aggregate([
+      { $match: { eventId: { $in: events.map(event => event._id) } } },
+      { $group: { _id: "$eventId", count: { $sum: 1 } } },
+    ]) : [];
+    const countByEvent = new Map(counts.map(item => [String(item._id), item.count]));
+    const eventsWithCounts = events.map(event => ({
+      ...event.toObject(),
+      registrationCount: countByEvent.get(String(event._id)) || 0,
+    }));
 
     res.json(eventsWithCounts);
   } catch (error) {

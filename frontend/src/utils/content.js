@@ -1,9 +1,15 @@
 import API_BASE_URL from '../config/api';
 
 export async function contentRequest(path, options = {}) {
+  const { public: isPublic = false, ...requestOptions } = options;
   const response = await fetch(`${API_BASE_URL}/api/${path}`, {
-    ...options,
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('igsaAdminToken')}`, ...options.headers },
+    ...requestOptions,
+    headers: {
+      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(!isPublic ? { Authorization: `Bearer ${localStorage.getItem('igsaAdminToken')}` } : {}),
+      ...options.headers,
+    },
+    signal: options.signal || AbortSignal.timeout(75000),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.message || `Request failed (${response.status}). Please try again.`);
