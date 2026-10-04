@@ -22,3 +22,13 @@ button:not(:disabled), a { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+
+.public-site { background: #fffdf9; color: #003b80; }
+.public-site :is(.text-blue-950, .text-blue-900, .text-blue-800) { color: #003b80; }
+.public-site .bg-slate-100 { background: #faf7ef; }
+.public-site :is(.bg-blue-950, .bg-blue-900) { background: #36502d; }
+.public-site .bg-gradient-to-br { background-image: linear-gradient(135deg, #c95100, #e99436); }
+.public-site .text-blue-200 { color: #fff3df; }
+.public-site :is(.text-orange-500, .text-orange-600, .text-orange-700) { color: #b94b00; }
+.public-site .bg-orange-500 { background: #c95100; }
+.public-site .border-slate-200 { border-color: #e5e0d4; }

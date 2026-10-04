@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="bg-slate-950 text-white py-12">
+    <footer className="bg-[#262a23] text-white py-12">
       <div className="max-w-6xl mx-auto px-5 md:px-6">
 
         <div className="grid md:grid-cols-3 gap-10">
@@ -11,7 +11,7 @@ function Footer() {
               IGSA UF
             </h3>
 
-            <p className="text-slate-400 leading-relaxed">
+            <p className="text-[#d5d5ca] leading-relaxed">
               Indian Graduate Student Association at the
               University of Florida, connecting students through
               culture, community, leadership, and professional growth.
@@ -24,7 +24,7 @@ function Footer() {
               Quick Links
             </h4>
 
-            <div className="flex flex-col gap-2 text-slate-400">
+            <div className="flex flex-col gap-2 text-[#d5d5ca]">
               <a href="/">Home</a>
               <a href="/about">About</a>
               <a href="/board">Board</a>
@@ -40,7 +40,7 @@ function Footer() {
               Contact
             </h4>
 
-            <div className="space-y-2 text-slate-400">
+            <div className="space-y-2 text-[#d5d5ca]">
               <a href="mailto:igsa.uf@gmail.com" className="hover:text-white">igsa.uf@gmail.com</a>
               <p>@igsa.uf</p>
             </div>
@@ -48,12 +48,12 @@ function Footer() {
 
         </div>
 
-        <div className="border-t border-slate-800 mt-10 pt-6 text-center">
-          <p className="text-slate-500 text-sm">
+        <div className="border-t border-[#42483b] mt-10 pt-6 text-center">
+          <p className="text-[#b9bcae] text-sm">
   © 2026 IGSA UF. All Rights Reserved.
 </p>
 
-<p className="text-slate-500 text-sm mt-2">
+<p className="text-[#b9bcae] text-sm mt-2">
   Website Designed & Developed by Sai Sri Krishna Teja Sanku
 </p>
         </div>

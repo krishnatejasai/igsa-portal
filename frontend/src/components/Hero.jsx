@@ -26,15 +26,14 @@ export default function Hero() {
         <div className="rangoli-frame">
           <svg className="rangoli" viewBox="0 0 520 520" fill="none" aria-hidden="true">
             <circle cx="260" cy="260" r="248" stroke="currentColor" strokeOpacity=".18" strokeDasharray="2 10" />
-            <g className="rangoli-outer">{Array.from({ length: 16 }, (_, i) => <g key={i} transform={`rotate(${i * 22.5} 260 260)`}><path d="M260 44C314 93 311 143 260 177C209 143 206 93 260 44Z" fill={i % 2 ? '#ff9a26' : '#ff6500'} fillOpacity="1" stroke="#ff6500" strokeWidth="1" /><circle cx="260" cy="29" r="4" fill="#ff6500" /></g>)}</g>
-            <g className="rangoli-inner">{Array.from({ length: 12 }, (_, i) => <path key={i} transform={`rotate(${i * 30} 260 260)`} d="M260 95C303 139 303 184 260 215C217 184 217 139 260 95Z" fill={i % 2 ? '#079447' : '#005bbb'} stroke="#ffffff" strokeWidth="2" />)}</g>
-            <circle cx="260" cy="260" r="94" fill="#ffffff" stroke="#ff8500" strokeWidth="2" />
-            <circle cx="260" cy="260" r="82" stroke="#ff8500" strokeDasharray="1 5" />
+            <g className="rangoli-outer">{Array.from({ length: 16 }, (_, i) => <g key={i} transform={`rotate(${i * 22.5} 260 260)`}><path d="M260 44C314 93 311 143 260 177C209 143 206 93 260 44Z" fill={i % 2 ? '#f79827' : '#ed7815'} fillOpacity="1" stroke="#d76812" strokeWidth="1" /><circle cx="260" cy="29" r="4" fill="#d76812" /></g>)}</g>
+            <g className="rangoli-inner">{Array.from({ length: 12 }, (_, i) => <path key={i} transform={`rotate(${i * 30} 260 260)`} d="M260 95C303 139 303 184 260 215C217 184 217 139 260 95Z" fill={i % 2 ? '#138808' : '#247337'} stroke="#ffffff" strokeWidth="1.5" />)}</g>
+            <circle cx="260" cy="260" r="94" fill="#ffffff" stroke="#ce7c29" strokeWidth="1.5" />
+            <circle cx="260" cy="260" r="82" stroke="#ce7c29" strokeDasharray="1 5" />
             <text x="260" y="258" textAnchor="middle" fill="#003b80" fontFamily="Georgia,serif" fontSize="48" fontWeight="bold">IGSA</text>
             <text x="260" y="286" textAnchor="middle" fill="#005bbb" fontFamily="sans-serif" fontSize="11" letterSpacing="5">AT UF</text>
           </svg>
         </div>
-        <span className="art-spark spark-one" aria-hidden="true">✧</span><span className="art-spark spark-two" aria-hidden="true">✧</span>
       </div>
     </div>
   </section>;

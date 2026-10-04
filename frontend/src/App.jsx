@@ -26,7 +26,7 @@ const AdminCheckIn = lazy(() => import("./pages/AdminCheckIn"));
 function App() {
   const { pathname } = useLocation();
   return (
-    <>
+    <div className={pathname.startsWith("/admin") ? "admin-site" : "public-site"}>
       {!pathname.startsWith("/admin") && <Navbar />}
 
       <Suspense fallback={<main className="p-10 pt-32" role="status">Loading page…</main>}>
@@ -147,7 +147,7 @@ function App() {
   <Route path="*" element={<main className="min-h-screen pt-40 px-6 text-center"><h1 className="text-4xl font-bold text-blue-950">Page not found</h1><p className="my-5 text-slate-600">This page may have moved or the link is incorrect.</p><Link to="/" className="text-blue-800 underline">Return to IGSA home</Link></main>} />
 </Routes>
       </Suspense>
-    </>
+    </div>
   );
 }
 
