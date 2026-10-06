@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 function Footer() {
   return (
     <footer className="bg-[#262a23] text-white py-12">
@@ -25,13 +26,13 @@ function Footer() {
             </h4>
 
             <div className="flex flex-col gap-2 text-[#d5d5ca]">
-              <a href="/">Home</a>
-              <a href="/about">About</a>
-              <a href="/board">Board</a>
-              <a href="/events">Events</a>
-              <a href="/gallery">Gallery</a>
-              <a href="/community">Roommates & Travel</a>
-              <a href="/contact">Contact</a>
+              <Link to="/">Home</Link>
+              <Link to="/about">About</Link>
+              <Link to="/board">Board</Link>
+              <Link to="/events">Events</Link>
+              <Link to="/gallery">Gallery</Link>
+              <Link to="/community">Roommates & Travel</Link>
+              <Link to="/contact">Contact</Link>
             </div>
           </div>
 

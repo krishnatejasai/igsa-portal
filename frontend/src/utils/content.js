@@ -1,6 +1,14 @@
+import { cachedPublicRequest, clearPublicCache } from './publicCache';
 import API_BASE_URL from '../config/api';
 
 export async function contentRequest(path, options = {}) {
+  const isCacheable = options.public && !options.signal && !options.headers?.Authorization && (!options.method || options.method === 'GET') && /^(events|board-members|gallery)(\?|$)/.test(path);
+  if (isCacheable) return cachedPublicRequest(path, () => performRequest(path, options));
+  const data = await performRequest(path, options);
+  if (options.method && options.method !== 'GET') clearPublicCache();
+  return data;
+}
+async function performRequest(path, options) {
   const { public: isPublic = false, ...requestOptions } = options;
   const response = await fetch(`${API_BASE_URL}/api/${path}`, {
     ...requestOptions,
@@ -12,7 +20,11 @@ export async function contentRequest(path, options = {}) {
     signal: options.signal || AbortSignal.timeout(75000),
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.message || `Request failed (${response.status}). Please try again.`);
+  if (!response.ok) {
+    const error = new Error(data.message || `Request failed (${response.status}). Please try again.`);
+    error.status = response.status;
+    throw error;
+  }
   return data;
 }
 

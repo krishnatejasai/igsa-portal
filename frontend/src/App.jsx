@@ -21,6 +21,7 @@ import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import GalleryAlbum from "./pages/GalleryAlbum";
 import AdminUsers from "./pages/AdminUsers";
+const MyCommunity = lazy(() => import("./pages/MyCommunity"));
 const Community = lazy(() => import("./pages/Community"));
 const ManageCommunity = lazy(() => import("./pages/ManageCommunity"));
 const AdminCommunity = lazy(() => import("./pages/AdminCommunity"));
@@ -40,6 +41,7 @@ function App() {
   <Route path="/events" element={<Events />} />
   <Route path="/gallery" element={<Gallery />} />
   <Route path="/community" element={<Community />} />
+  <Route path="/community/mine" element={<MyCommunity />} />
   <Route path="/community/manage/:id" element={<ManageCommunity />} />
   <Route path="/admin/community" element={<ProtectedRoute><AdminCommunity /></ProtectedRoute>} />
   <Route path="/contact" element={<Contact />} />

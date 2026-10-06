@@ -23,7 +23,8 @@ The platform helps students stay connected with IGSA through event registrations
 - Find temporary/permanent roommates by location and move-in dates
 - Find travel partners by departure city, destination, date, and ride preference
 - Publish community listings immediately with public email/phone consent
-- Close your own listing through its private management link
+- Sign in with Google to manage listings across devices
+- Edit, close, or delete your listing through My listings or its private link
 - Contact the IGSA team
 - Fully responsive design for desktop and mobile
 
@@ -298,28 +299,54 @@ GitHub: https://github.com/krishnatejasai
 This project is developed for the Indian Graduate Student Association (IGSA) and is intended for student engagement, event management, and community support activities.
 ## Community board
 
-Public page: `/community`, with roommate and travel tabs. Students do not need a
-board account to publish. At least one contact method and explicit public-display
-consent are required. The form returns a private management link; students must
-save it to close their listing. The link uses a random token in the URL fragment;
-only its SHA-256 hash is stored in MongoDB, and public responses never include it.
+Public page: `/community`; account page: `/community/mine`.
+Posts publish immediately. Titles are generated internally; cards show the poster's
+name and area/route. Travel search supports separate origin/destination, departure
+date range, and an optional return date. Roommates can add optional gender and
+apartment details. End/return dates are optional for both stay types.
 
-Travel listings leave the public board after departure day (America/New_York).
-Roommate listings expire after 60 days or the stay end date, whichever comes
-first. Expiry hides posts from public queries; it does not delete database records.
-The board can hide/restore posts at `/admin/community`. Reports go to
-`igsa.uf@gmail.com`. These are public, unverified student submissions.
+Google sign-in uses Google Identity Services and the official server verification
+library. `backend/config/community.js` contains the public OAuth client ID;
+`GOOGLE_CLIENT_ID` can override it. Authorized origins must include
+`https://www.igsauf.us` and `https://igsauf.us`. Add localhost origins only for local
+Google sign-in testing. The Google OAuth app must allow the intended users in its
+Audience settings (publish for all users rather than leave it test-user-only).
+No client secret, Firebase, SMS, or paid authentication service is required.
 
-No new services or environment variables are required. The new `CommunityPost`
-collection and its indexes are created through Mongoose. Listings are paginated
-(12 per page). Input is bounded and validated server-side; submissions are limited
-to five per contact per rolling 24 hours. This is a basic abuse limit, not verified
-student identity or a comprehensive anti-spam system.
+Google ID tokens are verified for signature, expiry, issuer, audience, and a
+server-signed nonce. The backend issues a seven-day student JWT scoped separately
+from board sessions. Google `sub` determines ownership, never a supplied email.
+No student passwords are stored. A Google login does not grant board permissions.
 
-Run validation and controller tests from the repository root:
+Guest posting still works. After publishing, save the private management link;
+it permits editing, closing, and permanent deletion. New links are also saved on
+that browser under My listings. Anyone using that browser can access saved links.
+Students can link an old post to Google by opening its private link, signing in,
+and selecting **Link to my Google account**. Matching an email alone never claims
+a post. Management secrets and Google owner IDs are excluded from public lists.
+
+All listings remain visible for five calendar months from posting unless closed,
+hidden, or deleted. Passed travel dates are clearly labeled. An idempotent startup
+migration extends older listings to this policy without reopening closed/hidden
+posts. Expiration hides listings from public queries rather than deleting them.
+Editing does not reset the five-month period.
+
+Board members can hide/restore posts at `/admin/community`.
+Reports go to `igsa.uf@gmail.com`. Contact details (and any supplied gender/apartment)
+are public only after the poster agrees to display them.
+
+Listings are paginated (12 per page). Input is bounded and validated server-side.
+Submissions are limited to five per contact per rolling 24 hours; this is a basic
+abuse limit rather than verified student identity. Public events, board profiles,
+and gallery summaries use a 60-second in-memory cache with request deduplication
+and invalidation after successful mutations. Student sessions, private management
+responses, and public community contact listings are not cached by this helper.
+Free hosting can still have a first-request wake-up delay.
+
+Run checks from the repository root:
 
 ```sh
-node --test backend/tests/*.test.js
+node --test backend/tests/*.test.js frontend/tests/*.test.js
 npm --prefix frontend run build
 npm --prefix frontend run lint
 ```

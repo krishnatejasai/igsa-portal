@@ -20,7 +20,7 @@ export default function Hero() {
         <p className="eyebrow hero-enter"><span className="status-dot" /> UNIVERSITY OF FLORIDA · GAINESVILLE</p>
         <h1 className="hero-enter">A little India.<br />A lot of <span className="hero-italic">belonging.<svg viewBox="0 0 500 25" aria-hidden="true"><path d="M5 18Q245 -8 492 13" /></svg></span></h1>
         <p className="hero-description hero-enter">New city. Familiar faces. A community that feels like home. We’re the Indian Graduate Student Association at UF.</p>
-        <div className="hero-actions hero-enter"><Link to="/events" className="home-button">Find your next event <span>↗</span></Link><Link to="/about" className="text-link">Get to know IGSA <span>→</span></Link></div>
+        <div className="hero-actions hero-enter"><Link to="/events" className="home-button">Find your next event <span>↗</span></Link><Link to="/community" className="text-link">Find roommates & travel partners <span>→</span></Link></div>
       </div>
       <div className="hero-art" ref={art} aria-label="An illustrated celebration of Indian culture and the UF community">
         <div className="rangoli-frame">
