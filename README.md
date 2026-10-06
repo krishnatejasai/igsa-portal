@@ -2,7 +2,7 @@
 
 Official web portal for the **Indian Graduate Student Association (IGSA)** at the **University of Florida**.
 
-The platform helps students stay connected with IGSA through event registrations, board information, photo galleries, contact forms, and a dedicated board management dashboard.
+The platform helps students stay connected with IGSA through event registrations, board information, photo galleries, roommate and travel listings, and a dedicated board management dashboard.
 
 ---
 
@@ -20,6 +20,10 @@ The platform helps students stay connected with IGSA through event registrations
 - Register for events online
 - Meet the IGSA Board
 - Browse event galleries
+- Find temporary/permanent roommates by location and move-in dates
+- Find travel partners by departure city, destination, date, and ride preference
+- Publish community listings immediately with public email/phone consent
+- Close your own listing through its private management link
 - Contact the IGSA team
 - Fully responsive design for desktop and mobile
 
@@ -34,7 +38,7 @@ The platform helps students stay connected with IGSA through event registrations
 - QR-based attendance check-in
 - Manage board members
 - Manage gallery albums
-- View and manage student inquiries
+- Hide and restore community listings (all authenticated board members)
 - Dashboard analytics and event insights
 
 ---
@@ -292,3 +296,30 @@ GitHub: https://github.com/krishnatejasai
 ## License
 
 This project is developed for the Indian Graduate Student Association (IGSA) and is intended for student engagement, event management, and community support activities.
+## Community board
+
+Public page: `/community`, with roommate and travel tabs. Students do not need a
+board account to publish. At least one contact method and explicit public-display
+consent are required. The form returns a private management link; students must
+save it to close their listing. The link uses a random token in the URL fragment;
+only its SHA-256 hash is stored in MongoDB, and public responses never include it.
+
+Travel listings leave the public board after departure day (America/New_York).
+Roommate listings expire after 60 days or the stay end date, whichever comes
+first. Expiry hides posts from public queries; it does not delete database records.
+The board can hide/restore posts at `/admin/community`. Reports go to
+`igsa.uf@gmail.com`. These are public, unverified student submissions.
+
+No new services or environment variables are required. The new `CommunityPost`
+collection and its indexes are created through Mongoose. Listings are paginated
+(12 per page). Input is bounded and validated server-side; submissions are limited
+to five per contact per rolling 24 hours. This is a basic abuse limit, not verified
+student identity or a comprehensive anti-spam system.
+
+Run validation and controller tests from the repository root:
+
+```sh
+node --test backend/tests/*.test.js
+npm --prefix frontend run build
+npm --prefix frontend run lint
+```

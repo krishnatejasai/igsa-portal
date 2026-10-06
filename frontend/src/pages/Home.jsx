@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import '../community.css';
 import { useEffect, useRef, useState } from 'react';
 import Hero from '../components/Hero';
 import AboutSection from '../components/AboutSection';
@@ -41,6 +43,7 @@ export default function Home() {
     <Hero />
     <div className="culture-ribbon"><p className="sr-only">Culture. Connection. Community. Go Gators.</p><div className="ribbon-track" aria-hidden="true">{[0, 1].map(copy => <div className="ribbon-group" key={copy}><span>CULTURE</span><i>✳︎</i><span>CONNECTION</span><i>✳︎</i><span>COMMUNITY</span><i>✳︎</i><span>GO GATORS</span><i>✳︎</i></div>)}</div></div>
     <AboutSection />
+    <section className="community-home"><div className="community-shell"><div className="community-heading"><div><p className="community-eyebrow">Students helping students</p><h2>Find your people. Make your plans.</h2></div></div><div className="community-home-grid"><Link to="/community?kind=roommate"><h3>Find a roommate</h3><p>Temporary stays or a long-term home. Connect with someone looking for the same.</p><span>Explore roommates →</span></Link><Link to="/community?kind=travel"><h3>Going somewhere?</h3><p>Find a travel partner heading to your destination, on your dates.</p><span>Find travel partners →</span></Link></div></div></section>
     <div className="home-events" data-reveal><EventsSection /></div>
     <section className="belong-banner"><div className="home-shell" data-reveal><span className="banner-flower" aria-hidden="true">✳︎</span><p>Different journeys.<br /><em>One community.</em></p><a href="mailto:igsa.uf@gmail.com" className="home-button light">Say hello <span>↗</span></a></div></section>
     <div className="home-board" data-reveal><BoardSection /></div>

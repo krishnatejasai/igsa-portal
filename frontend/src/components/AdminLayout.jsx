@@ -20,6 +20,7 @@ function AdminLayout({ children }) {
 
   const links = [
     ["Dashboard", "/admin/dashboard", true],
+    ["Community Listings", "/admin/community", true],
     ["Events", "/admin/events", canViewEvents()],
     ["Registrations", "/admin/registrations", canViewRegistrations()],
     ["QR Check-In", "/admin/check-in", canUseQRCheckIn()],
