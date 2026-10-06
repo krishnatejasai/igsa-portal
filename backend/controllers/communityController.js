@@ -21,7 +21,7 @@ async function create(req, res) {
 async function list(req, res) {
   try {
     const query = { status: 'active', expiresOn: { $gte: today() } };
-    const { kind, q, from, to, stayType, travelMode, origin, destination, returnDate } = req.query;
+    const { kind, q, from, to, stayType, travelMode, origin, destination, returnDate, date: departureDate } = req.query;
     if (kind && !['roommate', 'travel'].includes(kind)) return res.status(400).json({ message: 'Invalid listing type.' });
     if (kind) query.kind = kind;
     if (stayType && ['temporary', 'permanent'].includes(stayType)) query.stayType = stayType;
@@ -39,6 +39,7 @@ async function list(req, res) {
       if (returnDate) query.endDate = date(returnDate, 'return date', true);
       if (from) query.startDate = { $gte: date(from, 'start date', true) };
       if (to) query.startDate = { ...query.startDate, $lte: date(to, 'end date', true) };
+      if (departureDate) query.startDate = date(departureDate, 'departure date', true);
       if (from && to && from > to) throw new Error('Choose an end date on or after the start date.');
     } catch (error) { return res.status(400).json({ message: error.message }); }
     const page = Math.max(1, Math.min(1000, parseInt(req.query.page, 10) || 1));

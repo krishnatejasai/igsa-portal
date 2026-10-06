@@ -10,7 +10,7 @@ const room = { ...travel, kind: 'roommate', stayType: 'temporary', endDate: '202
 const check = body => communityInput(body, '2026-10-05');
 
 test('travel posts require consent and contact; reject invalid dates and injected values', () => {
-  for (const changes of [{ consent: false }, { email: '', phone: '' }, { startDate: '2026-02-30' }, { startDate: '2026-10-04' }, { endDate: '2026-10-14' }, { email: { $gt: '' } }, { phone: 'javascript:alert(1)' }, { travelMode: 'plane' }, { destination: '' }, { details: 'a'.repeat(1201) }]) {
+  for (const changes of [{ consent: false }, { email: '', phone: '' }, { startDate: '2026-02-30' }, { startDate: '2026-10-04' }, { email: { $gt: '' } }, { phone: 'javascript:alert(1)' }, { travelMode: 'plane' }, { destination: '' }, { details: 'a'.repeat(1201) }]) {
     assert.throws(() => check({ ...travel, ...changes }));
   }
 });
@@ -128,16 +128,16 @@ test('gender and apartment are optional, bounded, and persisted without a title 
   assert.equal(data.title, 'Student · Gainesville');
   assert.throws(() => check({ ...body, gender: 'Self-describe' }));
 });
-test('origin and destination searches match distinct fields, with optional return date', async t => {
+test('travel search matches distinct cities and one exact departure date', async t => {
   t.mock.method(Post, 'find', query => {
     assert.deepEqual(query.location, { $regex: 'Gainesville', $options: 'i' });
     assert.deepEqual(query.destination, { $regex: 'Tampa', $options: 'i' });
-    assert.equal(query.endDate, '2026-10-20');
-    assert.equal(query.startDate, undefined);
+    assert.equal(query.endDate, undefined);
+    assert.equal(query.startDate, '2026-10-20');
     return { select() { return this; }, sort() { return this; }, skip() { return this; }, limit() { return this; }, lean: async () => [] };
   });
   const res = response();
-  await controller.list({ query: { kind: 'travel', origin: 'Gainesville', destination: 'Tampa', returnDate: '2026-10-20' } }, res);
+  await controller.list({ query: { kind: 'travel', origin: 'Gainesville', destination: 'Tampa', date: '2026-10-20' } }, res);
   assert.equal(res.code, 200);
 });
 test('owner edit preserves ownership, moderation, expiry and original past date', async t => {
@@ -196,4 +196,10 @@ test('legacy retention migration extends dates without reopening or rewriting po
     assert.equal(options.timestamps, false);
   });
   await require('../utils/communityRetention')();
+});
+
+test('travel posts use only departure date; roommate stay ends remains optional and validated', () => {
+  assert.equal(check({ ...travel, endDate: '2020-01-01' }).endDate, '');
+  assert.equal(check({ ...room, endDate: '' }).endDate, '');
+  assert.throws(() => check({ ...room, endDate: '2026-10-14' }), /stay end/);
 });

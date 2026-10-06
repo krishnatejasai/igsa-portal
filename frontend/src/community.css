@@ -89,3 +89,12 @@
 .community-danger:disabled { opacity: .55; cursor: wait; }
 .community-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 640px) { .community-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .community-filters > label:first-child { grid-column: auto; } .community-account { padding: 16px; } }
+.community-filters.travel-filters { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
+.community-filters.roommate-filters { grid-template-columns: 2fr 1fr auto; }
+@media (max-width: 760px) {
+  .community-filters.travel-filters, .community-filters.roommate-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .community-filters.roommate-filters .community-button { grid-column: 1 / -1; }
+}
+@media (max-width: 420px) {
+  .community-filters.travel-filters, .community-filters.roommate-filters { grid-template-columns: 1fr; }
+}

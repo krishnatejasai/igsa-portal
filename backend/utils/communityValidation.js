@@ -29,14 +29,14 @@ function communityInput(body, currentDay = today(), originalStartDate) {
     phone: text(body.phone, 'phone number', 25),
     location: text(body.location, body.kind === 'travel' ? 'departure city' : 'location', 100, true),
     startDate: date(body.startDate, body.kind === 'travel' ? 'departure date' : 'move-in date', true),
-    endDate: date(body.endDate, body.kind === 'travel' ? 'return date' : 'end date'),
+    endDate: body.kind === 'travel' ? '' : date(body.endDate, 'end date'),
   };
   if (!data.email && !data.phone) throw new Error('Add an email address or phone number so students can contact you.');
   if (data.email && !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(data.email)) throw new Error('Enter a valid email address.');
   if (data.phone && (!/^\+?[\d ()-]+$/.test(data.phone) || data.phone.replace(/\D/g, '').length < 7 || data.phone.replace(/\D/g, '').length > 15)) throw new Error('Enter a valid phone number, including country code where needed.');
   if (data.startDate < currentDay && data.startDate !== originalStartDate) throw new Error('Choose today or a future date.');
   if (data.startDate > String(Number(currentDay.slice(0, 4)) + 2) + currentDay.slice(4)) throw new Error('Choose a date within the next two years.');
-  if (data.endDate && data.endDate < data.startDate) throw new Error('The end or return date must be on or after the start date.');
+  if (data.endDate && data.endDate < data.startDate) throw new Error('The stay end date must be on or after the start date.');
   if (data.kind === 'roommate') {
     if (!['temporary', 'permanent'].includes(body.stayType)) throw new Error('Choose temporary or permanent housing.');
     data.stayType = body.stayType;

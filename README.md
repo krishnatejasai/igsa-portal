@@ -301,9 +301,10 @@ This project is developed for the Indian Graduate Student Association (IGSA) and
 
 Public page: `/community`; account page: `/community/mine`.
 Posts publish immediately. Titles are generated internally; cards show the poster's
-name and area/route. Travel search supports separate origin/destination, departure
-date range, and an optional return date. Roommates can add optional gender and
-apartment details. End/return dates are optional for both stay types.
+name and area/route. Travel search has only departure city, destination, and an optional exact date.
+Travel posts have one date and no return date. Roommate search has only area/name
+and stay type. Roommates can add optional gender and
+apartment details. Stay end dates remain optional for roommate posts.
 
 Google sign-in uses Google Identity Services and the official server verification
 library. `backend/config/community.js` contains the public OAuth client ID;
