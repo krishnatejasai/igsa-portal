@@ -108,4 +108,12 @@ async function moderate(req, res) {
     res.json(post);
   } catch { failure(res); }
 }
-module.exports = { create, list, owner, mine, adminList, moderate };
+async function adminDelete(req, res) {
+  if (!validId(req.params.id)) return res.status(400).json({ message: 'Invalid listing ID.' });
+  try {
+    const post = await Post.findByIdAndDelete(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Listing not found.' });
+    res.json({ deleted: true });
+  } catch { failure(res); }
+}
+module.exports = { create, list, owner, mine, adminList, moderate, adminDelete };

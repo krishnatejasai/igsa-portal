@@ -332,7 +332,7 @@ migration extends older listings to this policy without reopening closed/hidden
 posts. Expiration hides listings from public queries rather than deleting them.
 Editing does not reset the five-month period.
 
-Board members can hide/restore posts at `/admin/community`.
+Board members can hide/restore or permanently delete any roommate or travel post (with confirmation) at `/admin/community`.
 Reports go to `igsa.uf@gmail.com`. Contact details (and any supplied gender/apartment)
 are public only after the poster agrees to display them.
 

@@ -98,3 +98,7 @@
 @media (max-width: 420px) {
   .community-filters.travel-filters, .community-filters.roommate-filters { grid-template-columns: 1fr; }
 }
+
+.community-card h3.community-route { margin: 0 0 16px; font-size: 22px; }
+.community-card-top { margin-bottom: 14px; }
+.community-contact { padding-top: 16px; }

@@ -8,6 +8,7 @@ router.get('/session/nonce', member.challenge);
 router.post('/session/google', member.login);
 router.get('/mine', member.requireMember, controller.mine);
 router.get('/admin', protect, controller.adminList);
+router.delete('/admin/:id', protect, controller.adminDelete);
 router.patch('/:id/status', protect, controller.moderate);
 router.get('/', controller.list);
 router.post('/', member.optionalMember, controller.create);

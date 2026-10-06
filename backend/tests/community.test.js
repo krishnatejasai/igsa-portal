@@ -203,3 +203,26 @@ test('travel posts use only departure date; roommate stay ends remains optional 
   assert.equal(check({ ...room, endDate: '' }).endDate, '');
   assert.throws(() => check({ ...room, endDate: '2026-10-14' }), /stay end/);
 });
+test('board deletion requires authentication and removes an exact ID for either listing kind', async t => {
+  const router = require('../routes/communityRoutes');
+  const route = router.stack.find(layer => layer.route?.path === '/admin/:id').route;
+  assert.equal(route.stack[0].handle.name, 'protect');
+  const denied = response();
+  await route.stack[0].handle({ headers: {} }, denied, () => assert.fail('anonymous must not delete'));
+  assert.equal(denied.code, 401);
+  const id = 'a'.repeat(24);
+  let kind = 'roommate';
+  t.mock.method(Post, 'findByIdAndDelete', async actualId => { assert.equal(actualId, id); return { _id: id, kind }; });
+  for (kind of ['roommate', 'travel']) {
+    const res = response();
+    await controller.adminDelete({ params: { id } }, res);
+    assert.deepEqual(res.body, { deleted: true });
+  }
+});
+test('board deletion rejects invalid IDs and reports missing listings', async t => {
+  const remove = t.mock.method(Post, 'findByIdAndDelete', async () => null);
+  const invalid = response(); await controller.adminDelete({ params: { id: 'bad' } }, invalid);
+  assert.equal(invalid.code, 400); assert.equal(remove.mock.callCount(), 0);
+  const missing = response(); await controller.adminDelete({ params: { id: 'a'.repeat(24) } }, missing);
+  assert.equal(missing.code, 404);
+});
