@@ -9,6 +9,7 @@ function EventRegistration() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [registeredData, setRegisteredData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -48,6 +49,7 @@ function EventRegistration() {
   };
 
   const handleRegister = async () => {
+    if (submitting) return;
     if (
       !form.name.trim() ||
       !form.email.trim() ||
@@ -59,6 +61,7 @@ function EventRegistration() {
       return;
     }
 
+    setSubmitting(true);
     try {
       const response = await fetch(`${API_BASE_URL}/api/registrations`, {
         method: "POST",
@@ -83,6 +86,8 @@ function EventRegistration() {
     } catch (error) {
       console.error(error);
       alert("Something went wrong while registering.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -135,6 +140,10 @@ function EventRegistration() {
     );
   }
 
+  if (registeredData?.waitlisted) {
+    return <main className="min-h-screen px-6 py-16 text-center"><h1 className="text-3xl font-bold">You’re on the waitlist</h1><p className="mt-4">We’ll email your QR ticket if a place becomes available.</p><Link to="/events">Back to events</Link></main>;
+  }
+
   if (registeredData) {
     return (
       <main className="min-h-screen bg-slate-100 flex items-center justify-center px-6 py-16">
@@ -145,6 +154,12 @@ function EventRegistration() {
 
           <p className="text-slate-600 mb-6">
             Please save this QR code and show it at the event check-in desk.
+          </p>
+
+          <p role="status" className="text-slate-600 mb-6">
+            {registeredData.emailDelivery === "queued"
+              ? `Your QR ticket and event details are queued for email to ${registeredData.email}. Please check your inbox and spam folder.`
+              : "Email delivery is not available yet. Please download your QR ticket below."}
           </p>
 
           <div className="flex justify-center bg-slate-50 rounded-2xl p-6 mb-6">
@@ -206,6 +221,7 @@ function EventRegistration() {
           />
 
           <input
+            type="email"
             name="email"
             value={form.email}
             onChange={handleChange}
@@ -239,9 +255,10 @@ function EventRegistration() {
 
           <button
             onClick={handleRegister}
+            disabled={submitting}
             className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold hover:bg-orange-600"
           >
-            Register
+            {submitting ? "Registering…" : "Register"}
           </button>
         </div>
       </div>

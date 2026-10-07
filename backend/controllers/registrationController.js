@@ -1,8 +1,10 @@
 const Registration = require("../models/Registration");
 const Event = require("../models/Event");
+const { emailFields, configured } = require("../utils/registrationEmail");
+const { randomUUID } = require("node:crypto");
 
 const generateQrCode = () => {
-  return `IGSA-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+  return `IGSA-${randomUUID()}`;
 };
 
 const promoteNextWaitlistedStudent = async (eventId) => {
@@ -36,6 +38,7 @@ const promoteNextWaitlistedStudent = async (eventId) => {
     nextWaitlisted.qrCode = generateQrCode();
   }
 
+  Object.assign(nextWaitlisted, emailFields(event));
   await nextWaitlisted.save();
 
   const newRegisteredCount = await Registration.countDocuments({
@@ -53,8 +56,14 @@ const promoteNextWaitlistedStudent = async (eventId) => {
 
 const createRegistration = async (req, res) => {
   try {
-    const normalizedEmail = req.body.email?.trim().toLowerCase();
-    const normalizedUfid = req.body.ufid?.trim();
+    const fields = ['name', 'email', 'phone', 'ufid', 'program'];
+    if (fields.some(key => typeof req.body[key] !== 'string' || !req.body[key].trim() || req.body[key].length > 254)
+      || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.body.email.trim())) {
+      return res.status(400).json({ message: 'Enter valid registration details and an email address.' });
+    }
+    const student = Object.fromEntries(fields.map(key => [key, req.body[key].trim()]));
+    const normalizedEmail = student.email.toLowerCase();
+    const normalizedUfid = student.ufid;
 
     const event = await Event.findById(req.body.eventId);
 
@@ -93,7 +102,9 @@ const createRegistration = async (req, res) => {
       });
 
       const waitlistedRegistration = await Registration.create({
-        ...req.body,
+        ...student,
+        eventId: event._id,
+        eventTitle: event.title,
         email: normalizedEmail,
         ufid: normalizedUfid,
         status: "waitlisted",
@@ -112,11 +123,14 @@ const createRegistration = async (req, res) => {
     }
 
     const registration = await Registration.create({
-      ...req.body,
+      ...student,
+      eventId: event._id,
+      eventTitle: event.title,
       email: normalizedEmail,
       ufid: normalizedUfid,
       qrCode: generateQrCode(),
       status: "registered",
+      ...emailFields(event),
     });
 
     if (registeredCount + 1 >= event.capacity) {
@@ -124,7 +138,9 @@ const createRegistration = async (req, res) => {
       await event.save();
     }
 
-    res.status(201).json(registration);
+    const result = registration.toObject();
+    delete result.emailSnapshot;
+    res.status(201).json({ ...result, emailDelivery: configured() ? 'queued' : 'unavailable' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

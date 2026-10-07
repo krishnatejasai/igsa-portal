@@ -260,6 +260,7 @@ function AdminRegistrations() {
 
               <td className="p-4 whitespace-normal break-all text-sm">
                 {student.email}
+                {student.emailStatus && <p className="text-xs mt-1 text-slate-500">Ticket email: {student.emailStatus === "sent" ? "Accepted by email provider" : student.emailStatus}</p>}
               </td>
 
               <td className="p-4 whitespace-nowrap">

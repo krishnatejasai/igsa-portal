@@ -42,6 +42,13 @@ registrationOpen: {
       required: true,
     },
 
+    confirmationMessage: {
+      type: String,
+      trim: true,
+      maxlength: 4000,
+      default: "",
+    },
+
     registrationLink: {
       type: String,
       default: "",
