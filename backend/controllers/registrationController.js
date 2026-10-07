@@ -1,6 +1,5 @@
 const Registration = require("../models/Registration");
 const Event = require("../models/Event");
-const { emailFields, configured } = require("../utils/registrationEmail");
 const { randomUUID } = require("node:crypto");
 
 const generateQrCode = () => {
@@ -38,7 +37,6 @@ const promoteNextWaitlistedStudent = async (eventId) => {
     nextWaitlisted.qrCode = generateQrCode();
   }
 
-  Object.assign(nextWaitlisted, emailFields(event));
   await nextWaitlisted.save();
 
   const newRegisteredCount = await Registration.countDocuments({
@@ -130,7 +128,6 @@ const createRegistration = async (req, res) => {
       ufid: normalizedUfid,
       qrCode: generateQrCode(),
       status: "registered",
-      ...emailFields(event),
     });
 
     if (registeredCount + 1 >= event.capacity) {
@@ -140,7 +137,7 @@ const createRegistration = async (req, res) => {
 
     const result = registration.toObject();
     delete result.emailSnapshot;
-    res.status(201).json({ ...result, emailDelivery: configured() ? 'queued' : 'unavailable' });
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

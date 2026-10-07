@@ -6,8 +6,6 @@ const connectDB = async () => {
 
     await require("../utils/communityRetention")();
 
-    require("../utils/registrationEmail").startEmailWorker();
-
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(error.message);

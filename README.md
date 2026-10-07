@@ -352,31 +352,7 @@ npm --prefix frontend run build
 npm --prefix frontend run lint
 ```
 
-## Event ticket emails
+## Registration QR tickets
 
-Create/Edit Event includes an optional **Registration email message** (4,000 characters).
-New confirmed registrations receive the saved event message, date, time, location,
-and their exact check-in QR as an inline PNG attachment. Replies go to `igsa.uf@gmail.com`.
-Waitlisted students receive their ticket only when promoted to a confirmed place.
-Existing registrations are not automatically emailed by this update.
-
-Delivery uses Resend over HTTPS (free Render instances block standard SMTP ports).
-To activate:
-
-1. In an IGSA-owned Resend account, verify a sending domain such as `mail.igsauf.us`
-   using the exact DNS records Resend provides. Preserve existing website/mail records.
-2. Add `RESEND_API_KEY` as a secret in the Render backend environment, never in
-   frontend variables, source control, or chat.
-3. Set `EVENT_EMAIL_FROM=IGSA UF <events@mail.igsauf.us>` to match the verified domain.
-4. Redeploy/restart the backend and register a controlled test address to verify
-   inbox receipt and scan the attached QR. Monitor the provider's sending limits.
-
-Registration and its email snapshot are saved together. A background worker claims
-one due message every two seconds, retries failures up to eight times, and uses a
-stable provider idempotency key. Jobs survive restarts; retries stop after 23 hours
-from the first attempt to stay inside the provider's 24-hour deduplication window.
-On free hosting, suspended servers pause delivery until they wake up. The on-screen
-QR remains available immediately. Without email configuration, students are told to
-save their QR; new pending tickets can send once configuration is added.
-Board registrations show pending/sending/failed or provider acceptance status;
-acceptance is not proof of inbox delivery. Check Resend logs for bounces and limits.
+Students receive their QR ticket on the registration success page and can download
+it for event check-in. Registration confirmation emails are not sent.

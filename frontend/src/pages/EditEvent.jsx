@@ -18,7 +18,6 @@ function EditEvent() {
     capacity: "",
     location: "",
     description: "",
-    confirmationMessage: "",
     registrationLink: "",
   });
 
@@ -181,20 +180,6 @@ const handleUpdate = async () => {
             onChange={handleChange}
             className="w-full mt-2 border border-slate-300 p-4 rounded-xl h-32"
           />
-        </div>
-
-        <div>
-          <label htmlFor="confirmationMessage" className="font-semibold text-blue-950">Registration email message</label>
-          <textarea
-            id="confirmationMessage"
-            name="confirmationMessage"
-            value={event.confirmationMessage || ""}
-            onChange={handleChange}
-            maxLength={4000}
-            className="w-full mt-2 border border-slate-300 p-4 rounded-xl h-32"
-            placeholder="We’re excited to see you! Please arrive 15 minutes early and bring your student ID."
-          />
-          <p className="text-sm text-slate-600 mt-2">Included with each new registration’s QR ticket, date, time, and location. Leave blank for a standard thank-you message.</p>
         </div>
 
         <div>

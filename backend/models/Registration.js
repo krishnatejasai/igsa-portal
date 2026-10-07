@@ -60,13 +60,6 @@ const registrationSchema = new mongoose.Schema(
       default: null,
     },
 
-    emailStatus: { type: String, enum: ["pending", "sending", "sent", "failed"], default: undefined },
-    emailSnapshot: { type: mongoose.Schema.Types.Mixed, select: false },
-    emailAttempts: { type: Number, default: 0 },
-    emailNextAttempt: Date,
-    emailFirstAttempt: Date,
-    emailSentAt: Date,
-
     checkedIn: {
       type: Boolean,
       default: false,
@@ -81,7 +74,5 @@ const registrationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-registrationSchema.index({ emailStatus: 1, emailNextAttempt: 1 });
 
 module.exports = mongoose.model("Registration", registrationSchema);

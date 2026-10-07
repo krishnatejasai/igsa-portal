@@ -141,7 +141,7 @@ function EventRegistration() {
   }
 
   if (registeredData?.waitlisted) {
-    return <main className="min-h-screen px-6 py-16 text-center"><h1 className="text-3xl font-bold">You’re on the waitlist</h1><p className="mt-4">We’ll email your QR ticket if a place becomes available.</p><Link to="/events">Back to events</Link></main>;
+    return <main className="min-h-screen px-6 py-16 text-center"><h1 className="text-3xl font-bold">You’re on the waitlist</h1><p className="mt-4">Your place is not confirmed yet. Contact IGSA for updates about availability.</p><Link to="/events">Back to events</Link></main>;
   }
 
   if (registeredData) {
@@ -154,12 +154,6 @@ function EventRegistration() {
 
           <p className="text-slate-600 mb-6">
             Please save this QR code and show it at the event check-in desk.
-          </p>
-
-          <p role="status" className="text-slate-600 mb-6">
-            {registeredData.emailDelivery === "queued"
-              ? `Your QR ticket and event details are queued for email to ${registeredData.email}. Please check your inbox and spam folder.`
-              : "Email delivery is not available yet. Please download your QR ticket below."}
           </p>
 
           <div className="flex justify-center bg-slate-50 rounded-2xl p-6 mb-6">
