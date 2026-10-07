@@ -22,8 +22,9 @@ In Porkbun (the registrar shown in IGSA's domain screenshot), open **Domain
 Management → igsauf.us → DNS**. Add the records provided by Resend:
 
 - DKIM verification TXT record.
-- SPF sending TXT record.
-- Sending/return-path MX record, including its priority.
+- Sending records shown by the dashboard. For this IGSA setup, Resend generated
+  CNAMEs `rsend.mail` → `rsend.forge.rmta.net` and `send.mail` → `send.forge.rmta.net`.
+  Other provider configurations may use TXT/MX records instead.
 
 Porkbun's Host field normally uses the relative name. For example, if Resend shows
 `resend._domainkey.mail.igsauf.us`, enter `resend._domainkey.mail` when Porkbun
