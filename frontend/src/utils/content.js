@@ -1,8 +1,8 @@
-import { cachedPublicRequest, clearPublicCache } from './publicCache';
+import { cachedPublicRequest, clearPublicCache, isPublicCachePath } from './publicCache';
 import API_BASE_URL from '../config/api';
 
 export async function contentRequest(path, options = {}) {
-  const isCacheable = options.public && !options.signal && !options.headers?.Authorization && (!options.method || options.method === 'GET') && /^(events|board-members|gallery)(\?|$)/.test(path);
+  const isCacheable = options.public && !options.signal && !options.headers?.Authorization && (!options.method || options.method === 'GET') && isPublicCachePath(path);
   if (isCacheable) return cachedPublicRequest(path, () => performRequest(path, options));
   const data = await performRequest(path, options);
   if (options.method && options.method !== 'GET') clearPublicCache();

@@ -340,8 +340,11 @@ Listings are paginated (12 per page). Input is bounded and validated server-side
 Submissions are limited to five per contact per rolling 24 hours; this is a basic
 abuse limit rather than verified student identity. Public events, board profiles,
 and gallery summaries use a 60-second in-memory cache with request deduplication
-and invalidation after successful mutations. Student sessions, private management
-responses, and public community contact listings are not cached by this helper.
+and invalidation after successful mutations. Public community searches use a bounded, 30-second memory-only cache with request
+deduplication and invalidation after successful changes. Contacts are never persisted
+to browser storage by this cache. Private management and student session responses
+are never cached. Navigation intent preloads public content; board dashboard code
+loads only when needed.
 Free hosting can still have a first-request wake-up delay.
 
 Run checks from the repository root:
