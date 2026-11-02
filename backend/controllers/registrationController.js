@@ -6,140 +6,38 @@ const generateQrCode = () => {
   return `IGSA-${randomUUID()}`;
 };
 
-const promoteNextWaitlistedStudent = async (eventId) => {
-  const event = await Event.findById(eventId);
-
-  if (!event) return null;
-
-  const registeredCount = await Registration.countDocuments({
-    eventId,
-    status: "registered",
-  });
-
-  if (registeredCount >= event.capacity) {
-    return null;
-  }
-
-  const nextWaitlisted = await Registration.findOne({
-    eventId,
-    status: "waitlisted",
-  }).sort({ waitlistPosition: 1, createdAt: 1 });
-
-  if (!nextWaitlisted) {
-    return null;
-  }
-
-  nextWaitlisted.status = "registered";
-  nextWaitlisted.waitlistPosition = null;
-  nextWaitlisted.promotedAt = new Date();
-
-  if (!nextWaitlisted.qrCode) {
-    nextWaitlisted.qrCode = generateQrCode();
-  }
-
-  await nextWaitlisted.save();
-
-  const newRegisteredCount = await Registration.countDocuments({
-    eventId,
-    status: "registered",
-  });
-
-  if (newRegisteredCount >= event.capacity) {
-    event.registrationOpen = false;
-    await event.save();
-  }
-
-  return nextWaitlisted;
-};
-
+const { bad, studentInput } = require('../utils/eventRegistration');
+// A write to the event serializes all bookings for it across server instances.
+// MongoDB retries conflicting transactions, so two students cannot take the last seat.
+const lockEvent = (id, session) => Event.findOneAndUpdate(
+  { _id: id }, { $inc: { bookingVersion: 1 } }, { new: true, session }
+);
 const createRegistration = async (req, res) => {
   try {
-    const fields = ['name', 'email', 'phone', 'ufid', 'program'];
-    if (fields.some(key => typeof req.body[key] !== 'string' || !req.body[key].trim() || req.body[key].length > 254)
-      || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(req.body.email.trim())) {
-      return res.status(400).json({ message: 'Enter valid registration details and an email address.' });
-    }
-    const student = Object.fromEntries(fields.map(key => [key, req.body[key].trim()]));
-    const normalizedEmail = student.email.toLowerCase();
-    const normalizedUfid = student.ufid;
-
-    const event = await Event.findById(req.body.eventId);
-
-    if (!event) {
-      return res.status(404).json({
-        message: "Event not found",
-      });
-    }
-
-    const existingRegistration = await Registration.findOne({
-      eventId: req.body.eventId,
-      $or: [{ email: normalizedEmail }, { ufid: normalizedUfid }],
+    const registration = await Event.db.transaction(async session => {
+      const event = await lockEvent(req.body.eventId, session);
+      if (!event) bad('Event not found.', 404);
+      const student = studentInput(req.body, event);
+      if (event.registrationOpen === false) bad('Registrations for this event are closed.', 409);
+      const contacts = [{ email: student.email }];
+      if (student.ufid) contacts.push({ ufid: student.ufid });
+      if (await Registration.findOne({ eventId: event._id, $or: contacts }).session(session)) bad('You have already registered for this event.', 409);
+      const count = await Registration.countDocuments({ eventId: event._id, status: 'registered' }).session(session);
+      if (count >= event.capacity) bad('This event is full.', 409);
+      if (student.slotId) {
+        const slot = event.slotQuestion.options.find(option => option.id === student.slotId);
+        const booked = await Registration.countDocuments({ eventId: event._id, status: 'registered', slotId: slot.id }).session(session);
+        if (booked >= slot.capacity) bad('That time slot is full. Please select another slot.', 409);
+      }
+      const [created] = await Registration.create([{
+        ...student, eventId: event._id, eventTitle: event.title,
+        qrCode: generateQrCode(), status: 'registered',
+      }], { session });
+      return created;
     });
-
-    if (existingRegistration) {
-      return res.status(400).json({
-        message: "You have already registered for this event.",
-      });
-    }
-
-    if (event.registrationOpen === false) {
-      return res.status(400).json({
-        message: "Registrations for this event are closed.",
-      });
-    }
-
-    const registeredCount = await Registration.countDocuments({
-      eventId: req.body.eventId,
-      status: "registered",
-    });
-
-    if (registeredCount >= event.capacity) {
-      const waitlistCount = await Registration.countDocuments({
-        eventId: req.body.eventId,
-        status: "waitlisted",
-      });
-
-      const waitlistedRegistration = await Registration.create({
-        ...student,
-        eventId: event._id,
-        eventTitle: event.title,
-        email: normalizedEmail,
-        ufid: normalizedUfid,
-        status: "waitlisted",
-        waitlistPosition: waitlistCount + 1,
-      });
-
-      event.registrationOpen = false;
-      await event.save();
-
-      return res.status(201).json({
-        ...waitlistedRegistration.toObject(),
-        waitlisted: true,
-        message:
-          "Event capacity is full. You have been added to the waitlist.",
-      });
-    }
-
-    const registration = await Registration.create({
-      ...student,
-      eventId: event._id,
-      eventTitle: event.title,
-      email: normalizedEmail,
-      ufid: normalizedUfid,
-      qrCode: generateQrCode(),
-      status: "registered",
-    });
-
-    if (registeredCount + 1 >= event.capacity) {
-      event.registrationOpen = false;
-      await event.save();
-    }
-
-    const result = registration.toObject();
-    delete result.emailSnapshot;
-    res.status(201).json(result);
+    res.status(201).json(registration);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.status || (error.name === 'CastError' ? 400 : 500)).json({ message: error.status ? error.message : 'Unable to register. Please try again.' });
   }
 };
 
@@ -157,31 +55,25 @@ const getRegistrations = async (req, res) => {
 
 const deleteRegistration = async (req, res) => {
   try {
-    const registration = await Registration.findById(req.params.id);
-
-    if (!registration) {
-      return res.status(404).json({
-        message: "Registration not found",
-      });
-    }
-
-    const eventId = registration.eventId;
-    const wasRegistered = registration.status === "registered";
-
-    await registration.deleteOne();
-
-    let promotedStudent = null;
-
-    if (wasRegistered) {
-      promotedStudent = await promoteNextWaitlistedStudent(eventId);
-    }
-
-    res.json({
-      message: "Registration deleted successfully",
-      promotedStudent,
+    const promotedStudent = await Event.db.transaction(async session => {
+      const registration = await Registration.findById(req.params.id).session(session);
+      if (!registration) bad('Registration not found.', 404);
+      const event = await lockEvent(registration.eventId, session);
+      await Registration.deleteOne({ _id: registration._id }, { session });
+      if (!event || event.slotQuestion?.enabled || registration.status !== 'registered') return null;
+      // Preserve legacy waitlists for ordinary events; shuttle bookings never waitlist.
+      const count = await Registration.countDocuments({ eventId: event._id, status: 'registered' }).session(session);
+      if (count >= event.capacity) return null;
+      const next = await Registration.findOne({ eventId: event._id, status: 'waitlisted' }).sort({ waitlistPosition: 1, createdAt: 1 }).session(session);
+      if (!next) return null;
+      next.status = 'registered'; next.waitlistPosition = null; next.promotedAt = new Date();
+      next.qrCode ||= generateQrCode();
+      await next.save({ session });
+      return next;
     });
+    res.json({ message: 'Registration deleted successfully', promotedStudent });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.status ? error.message : 'Unable to delete registration.' });
   }
 };
 

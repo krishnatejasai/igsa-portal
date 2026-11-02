@@ -1,3 +1,5 @@
+import EventRegistrationSettings from "../components/EventRegistrationSettings";
+import { clearPublicCache } from "../utils/publicCache";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
@@ -65,6 +67,7 @@ if (!response.ok) {
   return;
 }
 
+    clearPublicCache();
     alert("Event created successfully!");
     navigate("/admin/events");
   } catch (error) {
@@ -179,6 +182,8 @@ if (!response.ok) {
             placeholder="https://igsauf.com/events/register"
           />
         </div>
+
+        <EventRegistrationSettings event={event} onChange={setEvent} />
 
         <div className="flex gap-4">
           <button

@@ -25,18 +25,22 @@ const registrationSchema = new mongoose.Schema(
 
     phone: {
       type: String,
-      required: true,
+      default: "",
     },
 
     ufid: {
       type: String,
-      required: true,
+      default: "",
     },
 
     program: {
       type: String,
-      required: true,
+      default: "",
     },
+
+    slotId: String,
+    slotLabel: String,
+    slotQuestion: String,
 
     qrCode: {
       type: String,
@@ -74,5 +78,7 @@ const registrationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+registrationSchema.index({ eventId: 1, status: 1, slotId: 1 });
 
 module.exports = mongoose.model("Registration", registrationSchema);

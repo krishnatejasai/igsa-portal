@@ -1,3 +1,5 @@
+import EventRegistrationSettings from "../components/EventRegistrationSettings";
+import { clearPublicCache } from "../utils/publicCache";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
@@ -79,14 +81,16 @@ const handleUpdate = async () => {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to update event");
+      const data = await response.json();
+      throw new Error(data.message || "Failed to update event");
     }
 
+    clearPublicCache();
     alert("Event updated successfully!");
     navigate("/admin/events");
   } catch (error) {
     console.error(error);
-    alert("Something went wrong while updating the event.");
+    alert(error.message || "Something went wrong while updating the event.");
   }
 };
 
@@ -191,6 +195,8 @@ const handleUpdate = async () => {
             className="w-full mt-2 border border-slate-300 p-4 rounded-xl"
           />
         </div>
+
+        <EventRegistrationSettings event={event} onChange={setEvent} />
 
         <div className="flex gap-4">
           <button

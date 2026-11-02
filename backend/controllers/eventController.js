@@ -1,12 +1,13 @@
 const Event = require("../models/Event");
 const Registration = require("../models/Registration");
+const { eventInput, validateBookedSettings, bad } = require("../utils/eventRegistration");
 
 const createEvent = async (req, res) => {
   try {
-    const event = await Event.create(req.body);
+    const event = await Event.create(eventInput(req.body));
     res.status(201).json(event);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
@@ -42,26 +43,41 @@ const getEventById = async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    res.json(event);
+    const counts = await Registration.aggregate([
+      { $match: { eventId: event._id, status: 'registered' } },
+      { $group: { _id: '$slotId', count: { $sum: 1 } } },
+    ]);
+    const registeredCount = counts.reduce((sum, row) => sum + row.count, 0);
+    const data = event.toObject();
+    data.registrationFields ||= { phone: 'required', ufid: 'required', program: 'required' };
+    data.remaining = Math.max(0, event.capacity - registeredCount);
+    if (data.slotQuestion?.enabled) data.slotQuestion.options = data.slotQuestion.options.map(slot => {
+      const booked = counts.find(row => row._id === slot.id)?.count || 0;
+      return { ...slot, booked, remaining: Math.max(0, Math.min(slot.capacity - booked, data.remaining)) };
+    });
+    res.set('Cache-Control', 'no-store');
+    res.json(data);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
 const updateEvent = async (req, res) => {
   try {
-    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
+    const input = eventInput(req.body);
+    const updatedEvent = await Event.db.transaction(async session => {
+      const event = await Event.findOneAndUpdate({ _id: req.params.id }, { $inc: { bookingVersion: 1 } }, { new: true, session });
+      if (!event) bad('Event not found.', 404);
+      const registrations = await Registration.find({ eventId: event._id }).select('slotId status').session(session).lean();
+      validateBookedSettings(input, registrations);
+      event.set(input);
+      await event.save({ session });
+      return event;
     });
-
-    if (!updatedEvent) {
-      return res.status(404).json({ message: "Event not found" });
-    }
 
     res.json(updatedEvent);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
@@ -78,7 +94,7 @@ const toggleRegistrationStatus = async (req, res) => {
 
     res.json(event);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 
@@ -93,7 +109,7 @@ const deleteEvent = async (req, res) => {
     await event.deleteOne();
     res.json({ message: "Event deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };
 

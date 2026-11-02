@@ -22,6 +22,17 @@ const eventSchema = new mongoose.Schema(
       required: true,
     },
 
+    bookingVersion: { type: Number, default: 0, select: false },
+    registrationFields: {
+      phone: { type: String, enum: ['required', 'optional', 'hidden'], default: 'required' },
+      ufid: { type: String, enum: ['required', 'optional', 'hidden'], default: 'required' },
+      program: { type: String, enum: ['required', 'optional', 'hidden'], default: 'required' },
+    },
+    slotQuestion: {
+      enabled: { type: Boolean, default: false },
+      label: { type: String, default: '' },
+      options: [{ _id: false, id: String, label: String, capacity: Number }],
+    },
     capacity: {
       type: Number,
       default: 0,

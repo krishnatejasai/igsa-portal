@@ -359,3 +359,38 @@ npm --prefix frontend run lint
 
 Students receive their QR ticket on the registration success page and can download
 it for event check-in. Registration confirmation emails are not sent.
+
+## Configurable registration fields and shuttle slots
+
+In **Board Dashboard → Events → Create/Edit Event → Registration form settings**:
+
+- Set Phone number, UFID, and Program/major to **Required**, **Optional**, or **Do not ask**.
+  Name and email stay required. Existing events keep their original required fields
+  until a board editor changes them.
+- Enable the dropdown question, enter a question such as “Which shuttle departure
+  would you like?”, and add each slot label and its capacity.
+- The overall event capacity still applies across all slots. Set it appropriately
+  (for example, two 30-seat departures usually need an event capacity of 60).
+
+Students choose one slot. The dropdown shows seats remaining or **Full**, and full
+options cannot be selected. Availability refreshes every 15 seconds while the
+registration page is visible and again on window focus. The server checks capacity
+at submission; if a slot fills meanwhile, the student can choose another one.
+The selected slot appears on confirmation and in board registration search/CSV.
+
+MongoDB transactions serialize bookings and event configuration changes using a
+write to the event document before reading booking counts. This prevents overselling
+across concurrent requests/server instances and rolls back a failed registration.
+MongoDB Atlas supports this; a local database must run as a replica set for booking
+and event updates. No paid service or email service is added.
+
+Deleting a confirmed slot booking frees that seat. Manually closed events remain
+closed. Booked slots cannot be removed or have their capacity reduced below the
+confirmed count. Existing registration records retain their selected label.
+New bookings reject full events/slots instead of placing students on a waitlist;
+legacy waitlist promotion is preserved for events without slots.
+
+An isolated concurrency test is available at `backend/tests/integration/slots.cjs`.
+Install `mongodb-memory-server` in a temporary directory and set
+`IGSA_MEMORY_SERVER_MODULE` to that package's absolute path, then run the script
+with Node. It uses a disposable local replica set, never production records.

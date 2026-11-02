@@ -28,7 +28,7 @@ function AdminRegistrations() {
 
   const filteredRegistrations = registrations.filter((student) => {
     const matchesSearch =
-      `${student.name} ${student.email} ${student.phone} ${student.ufid} ${student.eventTitle} ${student.program}`
+      `${student.name} ${student.email} ${student.phone} ${student.ufid} ${student.eventTitle} ${student.program} ${student.slotLabel || ""}`
         .toLowerCase()
         .includes(search.toLowerCase());
 
@@ -114,6 +114,8 @@ function AdminRegistrations() {
       "UFID",
       "Event",
       "Program",
+      "Time slot question",
+      "Time slot",
       "QR Code",
       "Checked In",
       "Checked In At",
@@ -126,6 +128,8 @@ function AdminRegistrations() {
       student.ufid,
       student.eventTitle,
       student.program,
+      student.slotQuestion,
+      student.slotLabel,
       student.qrCode,
       student.checkedIn ? "Yes" : "No",
       student.checkedInAt
@@ -136,7 +140,7 @@ function AdminRegistrations() {
     const csvContent = [
       headers.join(","),
       ...rows.map((row) =>
-        row.map((value) => `"${value || ""}"`).join(",")
+        row.map((value) => `"${String(value || "").replace(/"/g, '""')}"`).join(",")
       ),
     ].join("\n");
 
@@ -272,6 +276,7 @@ function AdminRegistrations() {
 
               <td className="p-4 whitespace-normal break-words">
                 {student.eventTitle}
+                {student.slotLabel && <p className="text-sm font-semibold text-orange-700 mt-1">{student.slotLabel}</p>}
               </td>
 
               <td className="p-4 whitespace-normal break-words">
