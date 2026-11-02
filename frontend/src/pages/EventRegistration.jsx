@@ -265,7 +265,12 @@ function EventRegistration() {
           {selectedEvent.slotQuestion?.enabled && <label className="block font-semibold text-blue-950">{selectedEvent.slotQuestion.label} *
             <select name="slotId" value={form.slotId} onChange={handleChange} required className="w-full mt-2 border border-slate-300 p-4 rounded-xl">
               <option value="">Select a time slot</option>
-              {selectedEvent.slotQuestion.options.map(slot => <option key={slot.id} value={slot.id} disabled={slot.remaining === 0}>{slot.label} — {slot.remaining === 0 ? 'Full' : `${slot.remaining} seats left`}</option>)}
+              {selectedEvent.slotQuestion.options.map(slot => <option
+                key={slot.id}
+                value={slot.id}
+                disabled={slot.remaining === 0}
+                style={slot.remaining === 0 ? { color: '#6b7280', backgroundColor: '#f3f4f6' } : undefined}
+              >{slot.label} — {slot.remaining === 0 ? 'Full' : `${slot.remaining} seats left`}</option>)}
             </select>
             <span className="block text-sm font-normal text-slate-600 mt-2">Full slots cannot be selected. Availability is checked again when you register.</span>
           </label>}
