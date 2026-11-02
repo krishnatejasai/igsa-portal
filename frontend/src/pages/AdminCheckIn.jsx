@@ -58,15 +58,9 @@ function AdminCheckIn() {
       const html5QrCode = new Html5Qrcode("qr-reader");
       scannerRef.current = html5QrCode;
 
-      const cameras = await Html5Qrcode.getCameras();
-
-      if (!cameras || cameras.length === 0) {
-        alert("No camera found.");
-        return;
-      }
-
       await html5QrCode.start(
-        cameras[0].id,
+        // Prefer the rear camera; a non-exact constraint allows single-camera devices.
+        { facingMode: "environment" },
         {
           fps: 10,
           qrbox: { width: 250, height: 250 },
