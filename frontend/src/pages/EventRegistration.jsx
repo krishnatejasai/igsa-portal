@@ -248,7 +248,19 @@ function EventRegistration() {
             const mode = selectedEvent.registrationFields?.[key] || 'required';
             if (mode === 'hidden') return null;
             const label = { phone: 'Phone number', ufid: 'UFID', program: 'Program / major' }[key];
-            return <label key={key} className="block font-semibold text-blue-950">{label} {mode === 'optional' ? '(optional)' : '*'}<input name={key} value={form[key]} onChange={handleChange} maxLength={254} required={mode === 'required'} className="w-full mt-2 border border-slate-300 p-4 rounded-xl" /></label>;
+            const fieldLabel = `${label} ${mode === 'optional' ? '(optional)' : '*'}`;
+            return <input
+              key={key}
+              type={key === 'phone' ? 'tel' : 'text'}
+              name={key}
+              value={form[key]}
+              onChange={handleChange}
+              placeholder={fieldLabel}
+              aria-label={fieldLabel}
+              maxLength={254}
+              required={mode === 'required'}
+              className="w-full border border-slate-300 p-4 rounded-xl"
+            />;
           })}
           {selectedEvent.slotQuestion?.enabled && <label className="block font-semibold text-blue-950">{selectedEvent.slotQuestion.label} *
             <select name="slotId" value={form.slotId} onChange={handleChange} required className="w-full mt-2 border border-slate-300 p-4 rounded-xl">
